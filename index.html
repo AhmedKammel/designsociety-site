@@ -1,52 +1,703 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design Society | Digital Solutions</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; color: #333; line-height: 1.6; }
-        header { background-color: #2c3e50; color: #fff; padding: 20px 0; text-align: center; }
-        .container { width: 80%; margin: auto; padding: 20px; }
-        h1 { margin: 0; }
-        .hero { padding: 50px 0; text-align: center; background-color: #f4f4f4; }
-        .about { padding: 40px 0; }
-        footer { background-color: #333; color: #fff; text-align: center; padding: 20px 0; font-size: 0.9em; margin-top: 40px;}
-        .legal-info { color: #ccc; font-size: 0.8em; margin-top: 10px; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Design Society (fond) — Digital Division</title>
+  <meta name="description" content="Design Society (fond) — Empowering design through technology. We build high-quality mobile applications and utility tools for the Samsung Galaxy Store." />
+  <style>
+    :root{
+      --bg: #ffffff;
+      --text: #0f172a;         /* deep slate */
+      --muted: #475569;        /* slate gray */
+      --navy: #0b1f3b;         /* dark blue */
+      --navy-2: #102a52;       /* slightly lighter navy */
+      --line: #e2e8f0;         /* light gray border */
+      --card: #f8fafc;         /* off-white */
+      --shadow: 0 14px 30px rgba(2, 6, 23, .08);
+      --radius: 16px;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    .container{
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+    }
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 180px;
+    }
+    .logo-mark{
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-2));
+      box-shadow: 0 10px 20px rgba(11,31,59,.18);
+      position: relative;
+      flex: 0 0 40px;
+    }
+    .logo-mark::after{
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+    .brand-text{
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+    .brand-text strong{
+      font-size: 1.05rem;
+      letter-spacing: .2px;
+    }
+    .brand-text span{
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    nav{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-link{
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: .95rem;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+    .nav-link:hover{
+      background: var(--card);
+      color: var(--navy);
+      transform: translateY(-1px);
+    }
+    .nav-cta{
+      margin-left: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(11,31,59,.18);
+      transition: transform .18s ease, background .18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-cta:hover{
+      background: var(--navy-2);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile nav */
+    .menu-toggle{
+      display: none;
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      color: var(--text);
+      font-weight: 700;
+    }
+    .menu-toggle:focus{ outline: 3px solid rgba(15, 23, 42, .12); outline-offset: 2px; }
+
+    /* Hero */
+    .hero{
+      padding: 54px 0 30px;
+      background:
+        radial-gradient(900px 300px at 10% 0%, rgba(16,42,82,.10), transparent 70%),
+        radial-gradient(900px 300px at 90% 10%, rgba(11,31,59,.10), transparent 70%);
+    }
+    .hero-grid{
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .hero h1{
+      font-size: clamp(2.0rem, 3.6vw, 3.1rem);
+      line-height: 1.15;
+      margin: 0 0 12px;
+      letter-spacing: -0.4px;
+    }
+    .hero p{
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 58ch;
+    }
+    .hero-actions{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn-primary{
+      background: var(--navy);
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+    .btn-primary:hover{ background: var(--navy-2); transform: translateY(-1px); }
+    .btn-secondary{
+      background: #fff;
+      border-color: var(--line);
+      color: var(--navy);
+    }
+    .btn-secondary:hover{ background: var(--card); transform: translateY(-1px); }
+
+    .hero-card{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.7);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .hero-card h3{
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      letter-spacing: .2px;
+    }
+    .hero-card p{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+    .pill-row{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill{
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--navy);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: .88rem;
+      white-space: nowrap;
+    }
+
+    /* Sections */
+    section{
+      padding: 44px 0;
+    }
+    .section-title{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .section-title h2{
+      margin: 0;
+      font-size: 1.65rem;
+      letter-spacing: -0.2px;
+    }
+    .section-title p{
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .cards{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card{
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 22px rgba(2,6,23,.06);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 18px 32px rgba(2,6,23,.10);
+    }
+    .card .icon{
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(11,31,59,.12), rgba(16,42,82,.06));
+      border: 1px solid rgba(11,31,59,.12);
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+    .card h3{
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+    }
+    .card p{
+      margin: 0;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+
+    /* About layout */
+    .two-col{
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .panel{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--card);
+    }
+    .panel strong{
+      color: var(--navy);
+    }
+    .panel ul{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    /* Contact */
+    .contact-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .contact-card{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(2,6,23,.06);
+    }
+    .contact-card h3{
+      margin: 0 0 10px;
+    }
+    .contact-item{
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+    .contact-item:first-of-type{ border-top: none; padding-top: 0; }
+    .label{
+      font-size: .85rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+    }
+    .value{
+      font-weight: 700;
+      color: var(--text);
+    }
+    .value a{
+      color: var(--navy);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Footer (must include exact legal details) */
+    footer{
+      border-top: 1px solid var(--line);
+      background: #fff;
+      padding: 28px 0;
+    }
+    .footer-inner{
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .footer-inner p{
+      margin: 0;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .legal{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: var(--card);
+      color: var(--text);
+      font-size: .95rem;
+    }
+    .legal div{
+      padding: 6px 0;
+      border-top: 1px solid rgba(226,232,240,.9);
+    }
+    .legal div:first-child{ border-top: none; padding-top: 0; }
+    .copyright{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* Utilities */
+    .sr-only{
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .cards{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+      .contact-grid{ grid-template-columns: 1fr; }
+      .footer-inner{ grid-template-columns: 1fr; }
+      .nav-cta{ display: none; }
+    }
+
+    @media (max-width: 720px){
+      nav{
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 10px 0 16px;
+      }
+      nav a{
+        display: block;
+        width: 100%;
+      }
+      .menu-toggle{ display: inline-flex; align-items: center; gap: 10px; }
+      header .header-inner{
+        flex-wrap: wrap;
+      }
+      header.open nav{ display: flex; }
+    }
+  </style>
 </head>
+
 <body>
-
-<header>
+  <!-- Header -->
+  <header id="home">
     <div class="container">
-        <h1>Design Society</h1>
+      <div class="header-inner">
+        <a class="brand" href="#home" aria-label="Design Society home">
+          <div class="logo-mark" aria-hidden="true"></div>
+          <div class="brand-text">
+            <strong>Design Society</strong>
+            <span>Digital Division</span>
+          </div>
+        </a>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" id="menuBtn">
+          ☰ <span class="sr-only">Toggle navigation</span>
+          <span aria-hidden="true">Menu</span>
+        </button>
+
+        <nav id="primary-nav" aria-label="Primary">
+          <a class="nav-link" href="#home">Home</a>
+          <a class="nav-link" href="#apps">Apps</a>
+          <a class="nav-link" href="#about">About</a>
+          <a class="nav-link" href="#contact">Contact</a>
+          <a class="nav-cta" href="#contact">Get in touch →</a>
+        </nav>
+      </div>
     </div>
-</header>
+  </header>
 
-<div class="hero">
-    <div class="container">
-        <h2>Innovative Digital Solutions</h2>
-        <p>Promoting design and creative technology for the future.</p>
-    </div>
-</div>
+  <!-- Hero -->
+  <main>
+    <section class="hero" aria-label="Hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <h1>Empowering Design Through Technology</h1>
+            <p>
+              We build high-quality mobile applications and practical utility tools—crafted with a design-first mindset
+              for the Samsung Galaxy Store.
+            </p>
 
-<div class="container about">
-    <h3>About Us</h3>
-    <p>Design Society is an organization dedicated to promoting design, fashion, and related creative industries. We are expanding our mission into the digital realm by developing high-quality mobile applications that solve societal challenges through user-centric design and technology.</p>
-    <p>We are currently developing a suite of utility and productivity apps for the Galaxy Store ecosystem.</p>
-</div>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#apps">Explore our Apps</a>
+              <a class="btn btn-secondary" href="#about">Learn about us</a>
+            </div>
+          </div>
 
-<footer>
-    <div class="container">
-        <p>&copy; 2026 Design Society. All rights reserved.</p>
-        <div class="legal-info">
-            <p><strong>Design Society (fond)</strong></p>
-            <p>Address: Bryghuspladsen 8, 2., 1473 København K, Denmark</p>
-            <p>CVR Number: 36994126</p>
-            <p>Contact: info@designsociety.website</p>
+          <aside class="hero-card" aria-label="Highlights">
+            <h3>What we deliver</h3>
+            <p>
+              A focused digital division that turns everyday needs into reliable, elegant mobile experiences.
+            </p>
+            <div class="pill-row">
+              <span class="pill">Samsung Galaxy Store</span>
+              <span class="pill">Utility Tools</span>
+              <span class="pill">Mobile UX</span>
+              <span class="pill">Quality & Performance</span>
+              <span class="pill">Scandinavian Design</span>
+            </div>
+          </aside>
         </div>
-    </div>
-</footer>
+      </div>
+    </section>
 
+    <!-- Apps -->
+    <section id="apps" aria-label="Apps">
+      <div class="container">
+        <div class="section-title">
+          <h2>Apps & Tools</h2>
+          <p>
+            Our Digital Division creates mobile solutions designed to be simple, trustworthy, and genuinely useful in daily life.
+          </p>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="icon" aria-hidden="true">U</div>
+            <h3>Utility Apps</h3>
+            <p>
+              Lightweight tools that remove friction from everyday tasks—built for speed, clarity, and longevity.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon" aria-hidden="true">Q</div>
+            <h3>Quality by Design</h3>
+            <p>
+              Thoughtful UX, performance-focused engineering, and dependable releases that respect users’ time.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon" aria-hidden="true">S</div>
+            <h3>Galaxy-first Delivery</h3>
+            <p>
+              Tailored experiences for Samsung devices and distribution through the Samsung Galaxy Store.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Us -->
+    <section id="about" aria-label="About">
+      <div class="container">
+        <div class="section-title">
+          <h2>About Us</h2>
+          <p>
+            We are a Danish organization promoting design and creative industries—now expanding into the digital app market
+            to solve daily problems with practical mobile solutions.
+          </p>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <p style="margin-top:0;">
+              <strong>Design Society (fond)</strong> originated as a non-profit organization dedicated to strengthening
+              design culture and the creative industries. Today, we’re building on that foundation by launching a
+              <strong>Digital Division</strong>—bringing the same commitment to quality, craft, and purpose into software.
+            </p>
+            <p style="margin-bottom:0;">
+              Our mission remains consistent: empower people through design. We now apply that mission to mobile products
+              that help users work smarter, stay organized, and simplify everyday routines.
+            </p>
+          </div>
+
+          <div class="panel" aria-label="Quick facts">
+            <strong>How we work</strong>
+            <ul>
+              <li>Design-led product thinking and user-centered development</li>
+              <li>Corporate-grade reliability: stable, secure, and maintainable</li>
+              <li>Focused on utility, clarity, and real-world outcomes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Vision -->
+    <section aria-label="Our Vision">
+      <div class="container">
+        <div class="section-title">
+          <h2>Our Vision</h2>
+          <p>
+            We believe great design and strong engineering belong together—creating products that feel effortless and work reliably.
+          </p>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="icon" aria-hidden="true">D</div>
+            <h3>Digital Innovation</h3>
+            <p>
+              We explore new ways to translate design excellence into mobile experiences that are useful, inclusive, and future-ready.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon" aria-hidden="true">T</div>
+            <h3>Utility Tools</h3>
+            <p>
+              Practical apps that help users solve daily problems—simple interfaces, thoughtful details, and no unnecessary complexity.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon" aria-hidden="true">C</div>
+            <h3>Creative Impact</h3>
+            <p>
+              We champion the creative industries by building digital products that reflect strong design values and measurable usefulness.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" aria-label="Contact">
+      <div class="container">
+        <div class="section-title">
+          <h2>Contact</h2>
+          <p>
+            Interested in our apps, partnerships, or the Digital Division? Reach out—we’d love to connect.
+          </p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-card">
+            <h3>Get in touch</h3>
+            <div class="contact-item">
+              <span class="label">Email</span>
+              <span class="value"><a href="mailto:info@designsociety.website">info@designsociety.website</a></span>
+            </div>
+            <div class="contact-item">
+              <span class="label">Address</span>
+              <span class="value">Bryghuspladsen 8, 2., 1473 København K, Denmark</span>
+            </div>
+            <div class="contact-item">
+              <span class="label">Organization</span>
+              <span class="value">Design Society (fond)</span>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <h3>Focus areas</h3>
+            <div class="contact-item">
+              <span class="label">Platform</span>
+              <span class="value">Samsung Galaxy Store</span>
+            </div>
+            <div class="contact-item">
+              <span class="label">Products</span>
+              <span class="value">Mobile Applications & Utility Tools</span>
+            </div>
+            <div class="contact-item">
+              <span class="label">Approach</span>
+              <span class="value">Design-first • Reliable engineering • User-centered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (Exact legal details required) -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <p><strong>Design Society</strong> — A Danish organization promoting design and creative industries, now expanding into mobile applications and utility tools.</p>
+          <p class="copyright">© 2026 Design Society. All rights reserved.</p>
+        </div>
+
+        <div class="legal" aria-label="Legal details">
+          <div>Official Name: Design Society (fond)</div>
+          <div>CVR Number: 36994126</div>
+          <div>Address: Bryghuspladsen 8, 2., 1473 København K, Denmark</div>
+          <div>Email: info@designsociety.website</div>
+          <div>Copyright: © 2026 Design Society. All rights reserved.</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple mobile menu toggle (kept minimal; site remains one file)
+    (function () {
+      const header = document.querySelector("header");
+      const btn = document.getElementById("menuBtn");
+      const nav = document.getElementById("primary-nav");
+
+      if (!btn || !header || !nav) return;
+
+      btn.addEventListener("click", () => {
+        const isOpen = header.classList.toggle("open");
+        btn.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      // Close menu when a nav link is clicked (mobile UX)
+      nav.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => {
+          header.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
