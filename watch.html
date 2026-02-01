@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاهدة الحلقة</title>
+    <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
+    
+    <style>
+        body { background-color: #141414; color: #fff; font-family: sans-serif; margin: 0; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 10px; }
+        
+        /* تصميم المشغل الاحترافي */
+        .player-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+        
+        .player-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* أزرار السيرفرات */
+        .servers { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+        .server-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .server-btn:hover, .server-btn.active { background: #e50914; font-weight: bold; }
+        
+        .nav-btn { display: inline-block; margin-top: 20px; color: #fff; text-decoration: none; border: 1px solid #fff; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="nav-btn">← العودة للحلقات</a>
+        <h1 id="ep-title" style="margin-top: 20px;">جاري التحميل...</h1>
+        
+        <div class="player-wrapper">
+            <iframe id="video-frame" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+        </div>
+
+        <h3 style="margin-top:20px; color:#aaa;">اختر سيرفر المشاهدة:</h3>
+        <div id="servers-list" class="servers">
+            </div>
+    </div>
+
+    <script>
+        async function loadEpisodeData() {
+            // جلب رقم الحلقة من الرابط ?ep=1
+            const urlParams = new URLSearchParams(window.location.search);
+            const epNum = parseInt(urlParams.get('ep'));
+            
+            if (!epNum) { window.location.href = 'index.html'; return; }
+
+            try {
+                const response = await fetch('./elmosalsal.json');
+                const data = await response.json();
+                
+                // البحث عن الحلقة المطلوبة
+                const episode = data.find(e => e.episode_number === epNum);
+                
+                if (!episode) {
+                    document.getElementById('ep-title').innerText = "الحلقة غير موجودة";
+                    return;
+                }
+
+                // عرض البيانات
+                document.getElementById('ep-title').innerText = episode.title;
+                const iframe = document.getElementById('video-frame');
+                
+                // تشغيل أول سيرفر تلقائياً
+                const defaultStream = episode.streams.find(s => s.active) || episode.streams[0];
+                iframe.src = defaultStream.url;
+
+                // إنشاء أزرار السيرفرات
+                const serversContainer = document.getElementById('servers-list');
+                episode.streams.forEach((stream, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'server-btn';
+                    if(stream.url === defaultStream.url) btn.classList.add('active');
+                    
+                    btn.innerText = stream.label || `سيرفر ${index + 1}`;
+                    
+                    btn.onclick = () => {
+                        // تغيير الفيديو
+                        iframe.src = stream.url;
+                        // تحديث شكل الأزرار
+                        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    };
+                    
+                    serversContainer.appendChild(btn);
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        loadEpisodeData();
+    </script>
+</body>
+</html>
