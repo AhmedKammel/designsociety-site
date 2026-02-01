@@ -3,112 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design Society - أحدث المسلسلات</title>
+    <title>Design Society - مكتبة المسلسلات</title>
     <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
     <style>
-        :root { --primary: #e50914; --dark: #141414; }
-        body { background-color: var(--dark); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        :root { --primary: #e50914; --bg: #141414; --card-bg: #1f1f1f; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
         
-        /* Hero Section */
-        .hero { text-align: center; padding: 40px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), var(--dark)); border-bottom: 2px solid var(--primary); }
-        .hero h1 { color: var(--primary); margin: 0; font-size: 2.5rem; }
+        /* تصميم الهيدر */
+        .hero { 
+            text-align: center; padding: 60px 20px; 
+            background: linear-gradient(to bottom, #000, var(--bg)); 
+            border-bottom: 2px solid var(--primary); 
+        }
+        .hero h1 { color: var(--primary); font-size: 3rem; margin: 0; letter-spacing: 2px; }
+        .hero p { color: #aaa; margin-top: 10px; }
         
-        /* Grid System */
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        /* شبكة العرض */
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 25px; 
+        }
         
-        /* Series Card */
-        .card { background: #222; border-radius: 8px; overflow: hidden; transition: transform 0.3s; cursor: pointer; position: relative; border: 1px solid #333; }
-        .card:hover { transform: scale(1.05); border-color: var(--primary); z-index: 10; }
-        .card img { width: 100%; height: 260px; object-fit: cover; background: #333; } /* Placeholder color */
-        .card-content { padding: 10px; text-align: center; }
-        .card-title { font-size: 0.95rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* كارت المسلسل */
+        .card { 
+            background: var(--card-bg); border-radius: 8px; overflow: hidden; 
+            transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; 
+            position: relative; border: 1px solid #333; height: 100%;
+        }
+        .card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.4); 
+            border-color: var(--primary); 
+        }
         
-        /* Loading */
-        .loading { text-align: center; padding: 20px; color: #777; width: 100%; grid-column: 1 / -1; }
+        /* إصلاح الصور */
+        .poster-container {
+            width: 100%;
+            padding-top: 140%; /* نسبة طول للصورة بوستر */
+            position: relative;
+            background: #000;
+        }
+        .card img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; /* يمنع تمطيط الصورة */
+        }
+        
+        .card-content { padding: 15px; text-align: center; }
+        .card-title { font-size: 1rem; font-weight: bold; margin: 0; color: #eee; }
+        
+        /* مؤشر التحميل */
+        .loader { text-align: center; padding: 40px; color: #666; width: 100%; grid-column: 1/-1; }
     </style>
 </head>
 <body>
 
     <div class="hero">
         <h1>Design Society Drama</h1>
-        <p>مكتبة المسلسلات الحصرية (137 مسلسل)</p>
+        <p>شاهد أحدث المسلسلات التركية (137 مسلسل)</p>
     </div>
 
     <div class="container">
         <div id="series-grid" class="grid">
-            <div class="loading">جاري تحميل المكتبة...</div>
+            <div class="loader">جاري تحميل المكتبة...</div>
         </div>
     </div>
 
     <script>
-        // 1. توليد قائمة الروابط (من 1 إلى 137)
-        const totalSeries = 137;
+        // الرابط الصحيح الذي أرسلته
         const baseUrl = "https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal{ID}.json";
-        
+        const totalSeries = 137;
         const grid = document.getElementById('series-grid');
+        
+        // صورة احتياطية في حال كانت صورة المسلسل بايظة
+        const fallbackImage = "https://via.placeholder.com/300x450/111/e50914?text=Design+Society";
 
-        // دالة لجلب وعرض مسلسل واحد
-        async function fetchAndDisplay(id) {
+        async function fetchSeries(id) {
             try {
                 const url = baseUrl.replace('{ID}', id);
-                const response = await fetch(url);
-                if (!response.ok) return; // تخطي الملفات التالفة
-
-                const data = await response.json();
+                const res = await fetch(url);
+                if(!res.ok) return null;
                 
-                // بما أن ملف JSON عبارة عن مصفوفة حلقات، نأخذ الحلقة الأولى كعينة للبيانات (الصورة والاسم)
-                const firstEpisode = data[0]; 
+                const data = await res.json();
+                // نأخذ الحلقة الأولى كعينة للبيانات
+                const firstEp = data[0]; 
                 
-                // استخراج اسم المسلسل (إزالة كلمة "الحلقة 1" وما بعدها)
-                let seriesName = firstEpisode.title;
-                // محاولة تنظيف الاسم (اختياري حسب شكل الداتا)
-                seriesName = seriesName.split('الحلقة')[0].replace('مسلسل', '').trim();
-
+                // تنظيف الاسم (حذف كلمة "الحلقة 1" ليظهر اسم المسلسل فقط)
+                let cleanName = firstEp.title.split('الحلقة')[0].replace('مسلسل', '').trim();
+                
+                // إنشاء الكارت
                 const card = document.createElement('div');
                 card.className = 'card';
-                // نرسل رقم الملف (ID) لصفحة الحلقات
-                card.onclick = () => window.location.href = `episodes.html?id=${id}&name=${encodeURIComponent(seriesName)}`;
+                card.onclick = () => window.location.href = `episodes.html?id=${id}&name=${encodeURIComponent(cleanName)}`;
                 
                 card.innerHTML = `
-                    <img src="${firstEpisode.thumbnail}" alt="${seriesName}" loading="lazy">
+                    <div class="poster-container">
+                        <img src="${firstEp.thumbnail}" 
+                             alt="${cleanName}" 
+                             onerror="this.src='${fallbackImage}'">
+                    </div>
                     <div class="card-content">
-                        <h3 class="card-title">${seriesName}</h3>
+                        <h3 class="card-title">${cleanName}</h3>
                     </div>
                 `;
                 return card;
 
-            } catch (error) {
-                console.error(`Error loading series ${id}`, error);
+            } catch (e) {
+                console.error(`خطأ في تحميل مسلسل ${id}`);
                 return null;
             }
         }
 
-        async function loadAllSeries() {
-            grid.innerHTML = ''; // مسح التحميل
-
-            // سنقوم بتحميلهم على دفعات لتسريع الصفحة (Batch Processing)
-            const batchSize = 10; // تحميل 10 مسلسلات في كل مرة
+        async function loadLibrary() {
+            grid.innerHTML = ''; 
             
+            // تحميل ذكي (12 مسلسل في المرة لسرعة العرض)
+            const batchSize = 12;
             for (let i = 1; i <= totalSeries; i += batchSize) {
                 const promises = [];
                 for (let j = i; j < i + batchSize && j <= totalSeries; j++) {
-                    promises.push(fetchAndDisplay(j));
+                    promises.push(fetchSeries(j));
                 }
-                
-                // انتظار الدفعة الحالية
-                const results = await Promise.all(promises);
-                
-                // إضافة الكروت الناجحة للشبكة
-                results.forEach(card => {
-                    if (card) grid.appendChild(card);
-                });
+                const cards = await Promise.all(promises);
+                cards.forEach(c => { if(c) grid.appendChild(c); });
             }
         }
 
-        loadAllSeries();
+        loadLibrary();
     </script>
-    
     <script src="tracking.js"></script>
 </body>
 </html>
