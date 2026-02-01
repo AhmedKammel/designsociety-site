@@ -4,154 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>Design Society - مكتبة المسلسلات</title>
+    <title>الحلقات</title>
     <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
     <style>
-        :root { --primary: #e50914; --bg: #141414; --card-bg: #1f1f1f; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        body { background: #141414; color: #fff; font-family: sans-serif; margin: 0; }
         
-        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(to bottom, #000, var(--bg)); border-bottom: 2px solid var(--primary); }
-        .hero h1 { color: var(--primary); font-size: 3rem; margin: 0; }
-        
-        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
-        
-        .card { 
-            background: var(--card-bg); border-radius: 8px; overflow: hidden; 
-            transition: transform 0.3s; cursor: pointer; position: relative; 
-            border: 1px solid #333; height: 100%;
+        header { 
+            padding: 20px; border-bottom: 2px solid #e50914; 
+            display: flex; justify-content: space-between; align-items: center; background: #000;
         }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .btn-back { color: #fff; text-decoration: none; border: 1px solid #fff; padding: 6px 15px; border-radius: 4px; }
         
-        .poster-container {
-            width: 100%;
-            padding-top: 140%; /* يحافظ على نسبة البوستر */
-            position: relative;
-            background: #222; /* لون الخلفية قبل تحميل الصورة */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        .ep-card { 
+            background: #222; border-radius: 6px; overflow: hidden; 
+            cursor: pointer; transition: 0.2s; text-align: center; border: 1px solid #333;
         }
+        .ep-card:hover { background: #e50914; transform: translateY(-5px); }
         
-        .card img { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; opacity: 0; transition: opacity 0.5s;
-        }
-        
-        /* الصورة تظهر بـ Fade-in لما تتحمل */
-        .card img.loaded { opacity: 1; }
+        .ep-img { width: 100%; height: 100px; object-fit: cover; background: #000; }
+        .ep-title { padding: 10px; font-weight: bold; font-size: 0.9rem; }
 
-        .card-content { padding: 15px; text-align: center; }
-        .card-title { font-size: 1rem; font-weight: bold; margin: 0; color: #eee; }
-        
-        .loader { text-align: center; padding: 40px; color: #666; width: 100%; grid-column: 1/-1; }
+        /* نفس زر التيليجرام */
+        .telegram-float {
+            position: fixed; bottom: 20px; right: 20px;
+            background: linear-gradient(45deg, #229ED9, #1c79a8);
+            color: white; padding: 12px 25px; border-radius: 50px;
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; box-shadow: 0 5px 20px rgba(34, 158, 217, 0.5);
+            z-index: 1000; font-weight: bold;
+        }
+        .telegram-icon { width: 24px; height: 24px; fill: white; }
     </style>
 </head>
 <body>
+    
+    <header>
+        <h2 id="s-title" style="margin:0; font-size:1.2rem;">جاري التحميل...</h2>
+        <a href="index.html" class="btn-back">الرئيسية</a>
+    </header>
 
-    <div class="hero">
-        <h1>Design Society Drama</h1>
-        <p>شاهد أحدث المسلسلات التركية (137 مسلسل)</p>
-    </div>
+    <a href="https://t.me/qisatashk" target="_blank" class="telegram-float">
+        <svg class="telegram-icon" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.62 0zm4.91 5.6c.04 0 .09.01.13.02.34.09.53.48.43.82l-2.4 11.2c-.05.23-.23.41-.46.46-.35.08-.7-.14-.78-.49l-1.4-5.6-4.6 3.4c-.2.15-.48.14-.66-.03-.18-.17-.22-.45-.1-.66L8.8 9.6l-4.5-1.4c-.33-.1-.52-.46-.42-.8.09-.31.4-.49.71-.41l12.26 4.6zM9.8 10.6l1.2 4.4.9-3.8z"/></svg>
+        <span>تابع جديد الحلقات</span>
+    </a>
 
-    <div class="container">
-        <div id="series-grid" class="grid">
-            <div class="loader">جاري تحميل المكتبة...</div>
-        </div>
-    </div>
+    <div id="content" class="grid"></div>
 
     <script>
-        const baseUrl = "https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal{ID}.json";
-        const totalSeries = 137;
-        const grid = document.getElementById('series-grid');
-        const fallbackImage = "https://via.placeholder.com/300x450/111/e50914?text=Design+Society";
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const name = params.get('name');
+        if(name) document.getElementById('s-title').innerText = name;
 
-        // 1. إعداد مراقب الصور (Intersection Observer) للتحميل الكسول (Lazy Loading)
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    // نقل الرابط من data-src إلى src لبدء التحميل الفعلي
-                    img.src = img.dataset.src;
-                    // إيقاف مراقبة هذه الصورة لأنها بدأت التحميل
-                    observer.unobserve(img);
-                }
-            });
-        }, { rootMargin: "200px" }); // يبدأ التحميل قبل وصول الصورة للشاشة بـ 200 بيكسل
-
-        // 2. دالة تنظيف الرابط واستخدام البروكسي (Weserv)
-        function buildProxyImage(originalImage) {
-            if (!originalImage) return fallbackImage;
-            let url = originalImage.trim();
-
-            // إزالة البروتوكول (http/https) لتجنب مشاكل Weserv
-            url = url.replace(/^https?:\/\//, '');
-
-            // استخدام images.weserv.nl لكسر الحماية + تحويل الصورة لـ WebP لسرعة أكبر
-            return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=300&h=450&fit=cover&output=webp`;
-        }
-
-        async function fetchSeries(id) {
+        async function load() {
+            if(!id) return;
             try {
-                const url = baseUrl.replace('{ID}', id);
-                const res = await fetch(url);
-                if(!res.ok) return null;
-                
+                const res = await fetch(`https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal${id}.json`);
                 const data = await res.json();
-                const firstEp = data[0]; 
+                const box = document.getElementById('content');
                 
-                let cleanName = firstEp.title.split('الحلقة')[0].replace('مسلسل', '').trim();
-                
-                // تجهيز رابط البروكسي
-                const proxyImage = buildProxyImage(firstEp.thumbnail);
+                data.forEach(ep => {
+                    const div = document.createElement('div');
+                    div.className = 'ep-card';
+                    div.onclick = () => window.location.href = `watch.html?id=${id}&ep=${ep.episode_number}`;
+                    
+                    // استخدام weserv للصور المصغرة للحلقات أيضاً
+                    let thumb = ep.thumbnail.replace(/^https?:\/\//, '');
+                    let proxyThumb = `https://images.weserv.nl/?url=${encodeURIComponent(thumb)}&w=300&h=180&fit=cover`;
 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => window.location.href = `episodes.html?id=${id}&name=${encodeURIComponent(cleanName)}`;
-                
-                // بناء عنصر الصورة باستخدام Lazy Loading
-                // لاحظ: وضعنا الرابط الحقيقي في data-src
-                card.innerHTML = `
-                    <div class="poster-container">
-                        <img 
-                            alt="${cleanName}" 
-                            data-src="${proxyImage}" 
-                            src="${fallbackImage}"
-                            referrerpolicy="no-referrer"
-                            onload="this.classList.add('loaded')"
-                            onerror="this.src='${fallbackImage}'; this.classList.add('loaded');"
-                        >
-                    </div>
-                    <div class="card-content">
-                        <h3 class="card-title">${cleanName}</h3>
-                    </div>
-                `;
-                
-                // تسجيل الصورة في المراقب
-                const imgElement = card.querySelector('img');
-                imageObserver.observe(imgElement);
-
-                return card;
-
-            } catch (e) {
-                return null;
-            }
+                    div.innerHTML = `
+                        <img class="ep-img" src="${proxyThumb}" onerror="this.src='https://via.placeholder.com/300x180/333/e50914'">
+                        <div class="ep-title">حلقة ${ep.episode_number}</div>
+                    `;
+                    box.appendChild(div);
+                });
+            } catch(e) {}
         }
-
-        async function loadLibrary() {
-            grid.innerHTML = ''; 
-            // سنحاول تحميل عدد أكبر قليلاً في كل دفعة لأن الصور لن تُحمل فعلياً إلا عند الظهور
-            const batchSize = 15; 
-            
-            for (let i = 1; i <= totalSeries; i += batchSize) {
-                const promises = [];
-                for (let j = i; j < i + batchSize && j <= totalSeries; j++) {
-                    promises.push(fetchSeries(j));
-                }
-                const cards = await Promise.all(promises);
-                cards.forEach(c => { if(c) grid.appendChild(c); });
-            }
-        }
-
-        loadLibrary();
+        load();
     </script>
-    <script src="tracking.js"></script>
 </body>
 </html>
