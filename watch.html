@@ -7,58 +7,58 @@
     <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; margin: 0; }
-        
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        
-        /* الهيدر وزر العودة */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { background: #333; color: #fff; text-decoration: none; padding: 8px 15px; border-radius: 4px; transition: 0.3s; }
-        .back-btn:hover { background: #e50914; }
-        
-        /* === حل مشكلة المشغل المربع === */
-        .cinema-frame {
-            width: 100%;
-            /* هذا السطر هو السر: يجبر المتصفح على نسبة عرض 16:9 */
-            aspect-ratio: 16 / 9; 
-            background: #000;
-            border-radius: 12px; /* حواف دائرية */
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(229, 9, 20, 0.3); /* ظل أحمر خفيف */
-            border: 1px solid #333;
-            position: relative;
+
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .back-link { color: #aaa; text-decoration: none; border: 1px solid #444; padding: 8px 15px; border-radius: 5px; transition: 0.3s; }
+        .back-link:hover { background: #333; color: white; }
+
+        /* مشغل سينمائي 16:9 */
+        .cinema-screen {
+            width: 100%; aspect-ratio: 16/9; background: #000;
+            border-radius: 12px; border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(229, 9, 20, 0.2); overflow: hidden;
         }
-        
         iframe { width: 100%; height: 100%; border: none; }
-        
-        /* قائمة السيرفرات */
-        .servers-box { margin-top: 30px; text-align: center; }
-        .srv-title { color: #aaa; margin-bottom: 10px; font-size: 0.9rem; }
+
+        .servers-area { margin-top: 30px; text-align: center; }
         .srv-btn {
-            background: #222; color: #ccc; border: 1px solid #444;
-            padding: 10px 20px; margin: 5px; cursor: pointer;
-            border-radius: 4px; font-weight: bold; transition: 0.2s;
+            background: #222; color: #ccc; border: 1px solid #444; padding: 10px 20px;
+            margin: 5px; cursor: pointer; border-radius: 4px; font-weight: bold;
         }
-        .srv-btn:hover, .srv-btn.active {
-            background: #e50914; color: white; border-color: #e50914;
-            transform: scale(1.05);
+        .srv-btn:hover, .srv-btn.active { background: #e50914; color: white; border-color: #e50914; }
+
+        .telegram-float {
+            position: fixed; bottom: 20px; right: 20px;
+            background: linear-gradient(45deg, #229ED9, #1c79a8);
+            color: white; padding: 12px 25px; border-radius: 50px;
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; box-shadow: 0 5px 20px rgba(34, 158, 217, 0.5);
+            z-index: 1000;
         }
+        .telegram-icon { width: 24px; height: 24px; fill: white; }
     </style>
 </head>
 <body>
 
+    <a href="https://t.me/qisatashk" target="_blank" class="telegram-float">
+        <svg class="telegram-icon" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.62 0zm4.91 5.6c.04 0 .09.01.13.02.34.09.53.48.43.82l-2.4 11.2c-.05.23-.23.41-.46.46-.35.08-.7-.14-.78-.49l-1.4-5.6-4.6 3.4c-.2.15-.48.14-.66-.03-.18-.17-.22-.45-.1-.66L8.8 9.6l-4.5-1.4c-.33-.1-.52-.46-.42-.8.09-.31.4-.49.71-.41l12.26 4.6zM9.8 10.6l1.2 4.4.9-3.8z"/></svg>
+        <span>انضم لقناتنا</span>
+    </a>
+
     <div class="container">
-        <div class="top-bar">
-            <h2 id="ep-title" style="margin:0">جاري التجهيز...</h2>
-            <a href="#" id="back-link" class="back-btn">← عودة</a>
+        <div class="top-nav">
+            <h2 id="ep-name" style="margin:0; font-size:1.1rem">جاري التشغيل...</h2>
+            <a href="#" id="back-btn" class="back-link">← قائمة الحلقات</a>
         </div>
 
-        <div class="cinema-frame">
-            <iframe id="screen" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+        <div class="cinema-screen">
+            <iframe id="player" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
         </div>
 
-        <div class="servers-box">
-            <div class="srv-title">اختر سيرفر المشاهدة (إذا لم يعمل الأول):</div>
-            <div id="servers-list"></div>
+        <div class="servers-area">
+            <p style="color:#777; font-size:0.9rem;">سيرفرات المشاهدة:</p>
+            <div id="srv-list"></div>
         </div>
     </div>
 
@@ -67,23 +67,21 @@
         const seriesId = params.get('id');
         const epNum = parseInt(params.get('ep'));
 
-        document.getElementById('back-link').href = `episodes.html?id=${seriesId}`;
+        document.getElementById('back-btn').href = `episodes.html?id=${seriesId}`;
 
         async function init() {
             if(!seriesId) return;
-            const url = `https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal${seriesId}.json`;
-            
             try {
-                const res = await fetch(url);
+                const res = await fetch(`https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal${seriesId}.json`);
                 const data = await res.json();
                 const ep = data.find(e => e.episode_number === epNum);
-                
+
                 if(ep) {
-                    document.getElementById('ep-title').innerText = ep.title;
-                    const iframe = document.getElementById('screen');
-                    const srvDiv = document.getElementById('servers-list');
-                    
-                    // تشغيل الافتراضي
+                    document.getElementById('ep-name').innerText = ep.title;
+                    const iframe = document.getElementById('player');
+                    const list = document.getElementById('srv-list');
+
+                    // تشغيل الأول
                     iframe.src = ep.streams[0].url;
 
                     ep.streams.forEach((s, i) => {
@@ -91,21 +89,17 @@
                         btn.className = 'srv-btn';
                         if(i === 0) btn.classList.add('active');
                         btn.innerText = s.label || `سيرفر ${i+1}`;
-                        
                         btn.onclick = () => {
                             iframe.src = s.url;
                             document.querySelectorAll('.srv-btn').forEach(b => b.classList.remove('active'));
                             btn.classList.add('active');
-                        };
-                        srvDiv.appendChild(btn);
+                        }
+                        list.appendChild(btn);
                     });
                 }
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) {}
         }
         init();
     </script>
-    <script src="tracking.js"></script>
 </body>
 </html>
