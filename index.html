@@ -3,57 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Design Society - مكتبة المسلسلات</title>
     <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
     <style>
         :root { --primary: #e50914; --bg: #141414; --card-bg: #1f1f1f; }
         body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
         
-        /* تصميم الهيدر */
-        .hero { 
-            text-align: center; padding: 60px 20px; 
-            background: linear-gradient(to bottom, #000, var(--bg)); 
-            border-bottom: 2px solid var(--primary); 
-        }
-        .hero h1 { color: var(--primary); font-size: 3rem; margin: 0; letter-spacing: 2px; }
-        .hero p { color: #aaa; margin-top: 10px; }
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(to bottom, #000, var(--bg)); border-bottom: 2px solid var(--primary); }
+        .hero h1 { color: var(--primary); font-size: 3rem; margin: 0; }
         
-        /* شبكة العرض */
         .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-            gap: 25px; 
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
         
-        /* كارت المسلسل */
         .card { 
             background: var(--card-bg); border-radius: 8px; overflow: hidden; 
-            transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; 
-            position: relative; border: 1px solid #333; height: 100%;
+            transition: transform 0.3s; cursor: pointer; position: relative; 
+            border: 1px solid #333; height: 100%;
         }
-        .card:hover { 
-            transform: translateY(-10px); 
-            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.4); 
-            border-color: var(--primary); 
-        }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); }
         
-        /* إصلاح الصور */
         .poster-container {
             width: 100%;
-            padding-top: 140%; /* نسبة طول للصورة بوستر */
+            padding-top: 140%; /* يحافظ على شكل البوستر المستطيل */
             position: relative;
-            background: #000;
-        }
-        .card img { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; /* يمنع تمطيط الصورة */
+            background: #222; /* لون رمادي بدل الأسود عشان يبان إنه بيحمل */
         }
         
+        .card img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; opacity: 0; transition: opacity 0.5s;
+        }
+        
+        /* تأثير عند تحميل الصورة بنجاح */
+        .card img.loaded { opacity: 1; }
+
         .card-content { padding: 15px; text-align: center; }
         .card-title { font-size: 1rem; font-weight: bold; margin: 0; color: #eee; }
         
-        /* مؤشر التحميل */
         .loader { text-align: center; padding: 40px; color: #666; width: 100%; grid-column: 1/-1; }
     </style>
 </head>
@@ -71,13 +58,12 @@
     </div>
 
     <script>
-        // الرابط الصحيح الذي أرسلته
         const baseUrl = "https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal{ID}.json";
         const totalSeries = 137;
         const grid = document.getElementById('series-grid');
         
-        // صورة احتياطية في حال كانت صورة المسلسل بايظة
-        const fallbackImage = "https://via.placeholder.com/300x450/111/e50914?text=Design+Society";
+        // صورة احتياطية (Placeholder)
+        const fallbackImage = "https://via.placeholder.com/300x450/333/e50914?text=Design+Society";
 
         async function fetchSeries(id) {
             try {
@@ -86,22 +72,25 @@
                 if(!res.ok) return null;
                 
                 const data = await res.json();
-                // نأخذ الحلقة الأولى كعينة للبيانات
                 const firstEp = data[0]; 
                 
-                // تنظيف الاسم (حذف كلمة "الحلقة 1" ليظهر اسم المسلسل فقط)
                 let cleanName = firstEp.title.split('الحلقة')[0].replace('مسلسل', '').trim();
                 
-                // إنشاء الكارت
+                // === الحل السحري: استخدام وسيط الصور wsrv.nl ===
+                // هذا السطر يأخذ رابط الصورة الأصلي ويمرره عبر سيرفر وسيط لفتحه إجبارياً
+                const originalImage = firstEp.thumbnail;
+                const proxyImage = `https://wsrv.nl/?url=${encodeURIComponent(originalImage)}&w=300&h=450&fit=cover`;
+
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => window.location.href = `episodes.html?id=${id}&name=${encodeURIComponent(cleanName)}`;
                 
                 card.innerHTML = `
                     <div class="poster-container">
-                        <img src="${firstEp.thumbnail}" 
+                        <img src="${proxyImage}" 
                              alt="${cleanName}" 
-                             onerror="this.src='${fallbackImage}'">
+                             onload="this.classList.add('loaded')"
+                             onerror="this.src='${fallbackImage}'; this.classList.add('loaded');">
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">${cleanName}</h3>
@@ -110,16 +99,14 @@
                 return card;
 
             } catch (e) {
-                console.error(`خطأ في تحميل مسلسل ${id}`);
                 return null;
             }
         }
 
         async function loadLibrary() {
             grid.innerHTML = ''; 
+            const batchSize = 12; // تحميل 12 مسلسل في المرة لسرعة العرض
             
-            // تحميل ذكي (12 مسلسل في المرة لسرعة العرض)
-            const batchSize = 12;
             for (let i = 1; i <= totalSeries; i += batchSize) {
                 const promises = [];
                 for (let j = i; j < i + batchSize && j <= totalSeries; j++) {
