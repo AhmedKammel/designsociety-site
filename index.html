@@ -25,9 +25,9 @@
         
         .poster-container {
             width: 100%;
-            padding-top: 140%; /* يحافظ على شكل البوستر المستطيل */
+            padding-top: 140%; /* يحافظ على نسبة البوستر */
             position: relative;
-            background: #222; /* لون رمادي بدل الأسود عشان يبان إنه بيحمل */
+            background: #222; /* لون الخلفية قبل تحميل الصورة */
         }
         
         .card img { 
@@ -35,7 +35,7 @@
             object-fit: cover; opacity: 0; transition: opacity 0.5s;
         }
         
-        /* تأثير عند تحميل الصورة بنجاح */
+        /* الصورة تظهر بـ Fade-in لما تتحمل */
         .card img.loaded { opacity: 1; }
 
         .card-content { padding: 15px; text-align: center; }
@@ -61,9 +61,32 @@
         const baseUrl = "https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal{ID}.json";
         const totalSeries = 137;
         const grid = document.getElementById('series-grid');
-        
-        // صورة احتياطية (Placeholder)
-        const fallbackImage = "https://via.placeholder.com/300x450/333/e50914?text=Design+Society";
+        const fallbackImage = "https://via.placeholder.com/300x450/111/e50914?text=Design+Society";
+
+        // 1. إعداد مراقب الصور (Intersection Observer) للتحميل الكسول (Lazy Loading)
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    // نقل الرابط من data-src إلى src لبدء التحميل الفعلي
+                    img.src = img.dataset.src;
+                    // إيقاف مراقبة هذه الصورة لأنها بدأت التحميل
+                    observer.unobserve(img);
+                }
+            });
+        }, { rootMargin: "200px" }); // يبدأ التحميل قبل وصول الصورة للشاشة بـ 200 بيكسل
+
+        // 2. دالة تنظيف الرابط واستخدام البروكسي (Weserv)
+        function buildProxyImage(originalImage) {
+            if (!originalImage) return fallbackImage;
+            let url = originalImage.trim();
+
+            // إزالة البروتوكول (http/https) لتجنب مشاكل Weserv
+            url = url.replace(/^https?:\/\//, '');
+
+            // استخدام images.weserv.nl لكسر الحماية + تحويل الصورة لـ WebP لسرعة أكبر
+            return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=300&h=450&fit=cover&output=webp`;
+        }
 
         async function fetchSeries(id) {
             try {
@@ -76,26 +99,35 @@
                 
                 let cleanName = firstEp.title.split('الحلقة')[0].replace('مسلسل', '').trim();
                 
-                // === الحل السحري: استخدام وسيط الصور wsrv.nl ===
-                // هذا السطر يأخذ رابط الصورة الأصلي ويمرره عبر سيرفر وسيط لفتحه إجبارياً
-                const originalImage = firstEp.thumbnail;
-                const proxyImage = `https://wsrv.nl/?url=${encodeURIComponent(originalImage)}&w=300&h=450&fit=cover`;
+                // تجهيز رابط البروكسي
+                const proxyImage = buildProxyImage(firstEp.thumbnail);
 
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => window.location.href = `episodes.html?id=${id}&name=${encodeURIComponent(cleanName)}`;
                 
+                // بناء عنصر الصورة باستخدام Lazy Loading
+                // لاحظ: وضعنا الرابط الحقيقي في data-src
                 card.innerHTML = `
                     <div class="poster-container">
-                        <img src="${proxyImage}" 
-                             alt="${cleanName}" 
-                             onload="this.classList.add('loaded')"
-                             onerror="this.src='${fallbackImage}'; this.classList.add('loaded');">
+                        <img 
+                            alt="${cleanName}" 
+                            data-src="${proxyImage}" 
+                            src="${fallbackImage}"
+                            referrerpolicy="no-referrer"
+                            onload="this.classList.add('loaded')"
+                            onerror="this.src='${fallbackImage}'; this.classList.add('loaded');"
+                        >
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">${cleanName}</h3>
                     </div>
                 `;
+                
+                // تسجيل الصورة في المراقب
+                const imgElement = card.querySelector('img');
+                imageObserver.observe(imgElement);
+
                 return card;
 
             } catch (e) {
@@ -105,7 +137,8 @@
 
         async function loadLibrary() {
             grid.innerHTML = ''; 
-            const batchSize = 12; // تحميل 12 مسلسل في المرة لسرعة العرض
+            // سنحاول تحميل عدد أكبر قليلاً في كل دفعة لأن الصور لن تُحمل فعلياً إلا عند الظهور
+            const batchSize = 15; 
             
             for (let i = 1; i <= totalSeries; i += batchSize) {
                 const promises = [];
