@@ -2,44 +2,89 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>عرض البيانات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Society - المسلسلات</title>
+    
+    <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
+    
+    <style>
+        :root { --primary: #e50914; --dark: #141414; --gray: #333; }
+        body { background-color: var(--dark); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        
+        /* الهيدر */
+        header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--primary); }
+        h1 { margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* شبكة الحلقات */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        
+        /* كارت الحلقة */
+        .card { background: var(--gray); border-radius: 8px; overflow: hidden; transition: transform 0.3s; cursor: pointer; position: relative; }
+        .card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 0 20px rgba(229,9,20,0.5); }
+        .card img { width: 100%; height: 300px; object-fit: cover; }
+        .card-content { padding: 15px; }
+        .episode-badge { position: absolute; top: 10px; left: 10px; background: var(--primary); padding: 5px 10px; font-weight: bold; border-radius: 4px; }
+        .card-title { font-size: 0.9rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* زر التحميل */
+        .loading { text-align: center; padding: 50px; font-size: 1.5rem; color: #666; }
+    </style>
 </head>
 <body>
 
-    <h1>البيانات المستوردة</h1>
-    <div id="data-container">جاري التحميل...</div>
+    <header>
+        <h1>Design Society Drama</h1>
+    </header>
+
+    <div class="container">
+        <h2 style="border-right: 5px solid var(--primary); padding-right: 15px;">آخر الحلقات المضافة</h2>
+        <div id="episodes-grid" class="grid">
+            <div class="loading">جاري جلب البيانات...</div>
+        </div>
+    </div>
 
     <script>
-        // رابط المصدر الذي تريد جلب البيانات منه
-        const apiUrl = 'https://aa.3ick.net/';
-
-        // دالة لجلب البيانات
-        async function fetchData() {
+        async function loadEpisodes() {
             try {
-                const response = await fetch(apiUrl);
-                
-                // التأكد من أن الرابط يعمل
-                if (!response.ok) {
-                    throw new Error('حدث خطأ في الاتصال بالمصدر');
-                }
-
-                // تحويل البيانات لـ JSON (لو كانت البيانات نصية فقط استخدم .text())
+                // جلب ملف الـ JSON الذي رفعته
+                const response = await fetch('./elmosalsal.json'); 
                 const data = await response.json();
-
-                // عرض البيانات في الموقع (عدل هذا الجزء حسب شكل الداتا)
-                document.getElementById('data-container').innerText = JSON.stringify(data, null, 2);
                 
-                // طباعة البيانات في الكونسول للمراجعة
-                console.log(data);
+                const grid = document.getElementById('episodes-grid');
+                grid.innerHTML = ''; // مسح رسالة التحميل
+
+                data.forEach(episode => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    // عند الضغط، نذهب لصفحة المشاهدة ونمرر رقم الحلقة
+                    card.onclick = () => window.location.href = `watch.html?ep=${episode.episode_number}`;
+                    
+                    card.innerHTML = `
+                        <span class="episode-badge">حلقة ${episode.episode_number}</span>
+                        <img src="${episode.thumbnail}" alt="${episode.title}" loading="lazy">
+                        <div class="card-content">
+                            <h3 class="card-title">${episode.title}</h3>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
 
             } catch (error) {
-                console.error('فشل جلب البيانات:', error);
-                document.getElementById('data-container').innerText = 'فشل التحميل، تأكد من الـ Console';
+                console.error('Error:', error);
+                document.getElementById('episodes-grid').innerHTML = '<p style="text-align:center">حدث خطأ في تحميل الحلقات. تأكد من رفع ملف elmosalsal.json</p>';
             }
         }
 
-        // تشغيل الدالة
-        fetchData();
+        // تشغيل الدوال عند التحميل
+        loadEpisodes();
+
+        // تسجيل الـ Service Worker للإعلانات
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                console.log('Service Worker Registered');
+            });
+        }
     </script>
 </body>
 </html>
