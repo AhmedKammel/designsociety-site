@@ -2,61 +2,89 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهدة الحلقة</title>
     <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; margin: 0; text-align: center; }
-        .player-container { max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; border: 2px solid #333; }
+        .player-wrapper { max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; border: 2px solid #333; background: #000; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .controls { margin: 20px; }
-        button { background: #333; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; }
-        button.active { background: #e50914; }
-        .nav { padding: 20px; text-align: right; max-width: 900px; margin: 0 auto; }
-        a { color: #aaa; text-decoration: none; font-size: 1.1rem; }
+        
+        .servers { padding: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .srv-btn { background: #333; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+        .srv-btn.active, .srv-btn:hover { background: #e50914; }
+        
+        .nav-controls { padding: 20px; display: flex; justify-content: space-between; max-width: 900px; margin: 0 auto; }
+        .nav-btn { color: #aaa; text-decoration: none; border: 1px solid #aaa; padding: 5px 15px; border-radius: 4px; }
+        h2 { margin-top: 20px; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <div class="nav">
-        <a href="series.html">← عودة للمسلسلات</a>
-    </div>
+    <div class="nav-controls">
+        <a href="#" id="back-link" class="nav-btn">← قائمة الحلقات</a>
+        </div>
 
-    <h2 id="title">جاري التحميل...</h2>
+    <h2 id="ep-title">جاري التجهيز...</h2>
 
-    <div class="player-container">
+    <div class="player-wrapper">
         <iframe id="screen" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
     </div>
 
-    <div class="controls" id="servers"></div>
+    <p style="color:#aaa; font-size:0.9rem;">اختر سيرفر المشاهدة:</p>
+    <div id="servers-container" class="servers"></div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
+        const seriesId = urlParams.get('id');
         const epNum = parseInt(urlParams.get('ep'));
 
-        fetch('elmosalsal.json')
-            .then(r => r.json())
-            .then(data => {
-                const ep = data.find(e => e.episode_number === epNum);
-                if(ep) {
-                    document.getElementById('title').innerText = ep.title;
-                    const frame = document.getElementById('screen');
-                    const btns = document.getElementById('servers');
-                    
-                    // تشغيل أول سيرفر
-                    frame.src = ep.streams[0].url;
+        // ضبط زر العودة
+        document.getElementById('back-link').href = `episodes.html?id=${seriesId}`;
 
-                    ep.streams.forEach(s => {
+        async function initPlayer() {
+            if(!seriesId || !epNum) return;
+            
+            const url = `https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal${seriesId}.json`;
+            
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                // البحث عن الحلقة المطلوبة
+                const episode = data.find(e => e.episode_number === epNum);
+                
+                if(episode) {
+                    document.getElementById('ep-title').innerText = episode.title;
+                    const iframe = document.getElementById('screen');
+                    const btnsDiv = document.getElementById('servers-container');
+
+                    // تشغيل السيرفر الأول
+                    iframe.src = episode.streams[0].url;
+
+                    // توليد أزرار السيرفرات
+                    episode.streams.forEach((stream, idx) => {
                         const btn = document.createElement('button');
-                        btn.innerText = s.label || 'سيرفر مشاهدة';
+                        btn.className = 'srv-btn';
+                        if(idx === 0) btn.classList.add('active');
+                        btn.innerText = stream.label || `سيرفر ${idx + 1}`;
+                        
                         btn.onclick = () => {
-                            frame.src = s.url;
-                            document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                            iframe.src = stream.url;
+                            document.querySelectorAll('.srv-btn').forEach(b => b.classList.remove('active'));
                             btn.classList.add('active');
                         };
-                        btns.appendChild(btn);
+                        btnsDiv.appendChild(btn);
                     });
+                } else {
+                    document.getElementById('ep-title').innerText = "الحلقة غير موجودة";
                 }
-            });
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        initPlayer();
     </script>
     <script src="tracking.js"></script>
 </body>
