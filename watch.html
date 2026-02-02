@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>مشاهدة الحلقة</title>
+
+  <!-- ADS (لا يتم تعديلها) -->
+  <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
+
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <h2 id="ep-title" style="margin:0; font-size:1.05rem; color:#fff;">جاري التحضير…</h2>
+        <small id="status-text">—</small>
+      </div>
+
+      <div class="actions">
+        <a id="back-btn" class="btn" href="index.html">← رجوع</a>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://t.me/qisatashk" target="_blank" class="telegram-float" rel="noopener">
+    <svg class="telegram-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.62 0zm4.91 5.6c.04 0 .09.01.13.02.34.09.53.48.43.82l-2.4 11.2c-.05.23-.23.41-.46.46-.35.08-.7-.14-.78-.49l-1.4-5.6-4.6 3.4c-.2.15-.48.14-.66-.03-.18-.17-.22-.45-.1-.66L8.8 9.6l-4.5-1.4c-.33-.1-.52-.46-.42-.8.09-.31.4-.49.71-.41l12.26 4.6zM9.8 10.6l1.2 4.4.9-3.8z"/></svg>
+    <span>انضم لقناتنا</span>
+  </a>
+
+  <div class="section">
+    <div class="container">
+      <div class="player-wrap">
+        <div class="cinema-screen">
+          <iframe id="player" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+        </div>
+      </div>
+
+      <div class="servers-area">
+        <p style="color:rgba(255,255,255,.65); margin:14px 0 0;">سيرفرات المشاهدة:</p>
+        <div id="srv-list" class="srv-list"></div>
+      </div>
+
+      <div id="error-box" class="notice" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/site.js"></script>
+  <script>
+    const CFG = window.DS_CONFIG;
+    const DS = window.DS;
+
+    const params = new URLSearchParams(location.search);
+    const seriesId = params.get('id');
+    const epNum = params.get('ep') ? parseInt(params.get('ep'), 10) : null;
+    const src = params.get('src'); // latest
+    const idx = params.get('i') ? parseInt(params.get('i'), 10) : null;
+    const seriesName = params.get('name') ? decodeURIComponent(params.get('name')) : '';
+
+    const epTitle = DS.$('#ep-title');
+    const statusText = DS.$('#status-text');
+    const backBtn = DS.$('#back-btn');
+    const iframe = DS.$('#player');
+    const list = DS.$('#srv-list');
+    const errorBox = DS.$('#error-box');
+
+    function setStatus(msg){ statusText.textContent = msg; }
+    function showError(msg){
+      errorBox.style.display = '';
+      errorBox.textContent = msg;
+    }
+
+    function pickFirstStream(streams){
+      if(!Array.isArray(streams) || !streams.length) return null;
+      const active = streams.find(s => s && s.active);
+      return active || streams[0];
+    }
+
+    function renderServers(streams){
+      list.innerHTML = '';
+      if(!Array.isArray(streams) || !streams.length){
+        showError('لا توجد سيرفرات لهذه الحلقة.');
+        return;
+      }
+      const first = pickFirstStream(streams);
+      iframe.src = first.url || '';
+
+      streams.forEach((s, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'srv-btn' + ((s === first) ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = s.label || `سيرفر ${i+1}`;
+        btn.onclick = () => {
+          iframe.src = s.url || '';
+          DS.$$('.srv-btn', list).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        };
+        list.appendChild(btn);
+      });
+    }
+
+    async function loadFromSeries(){
+      const sources = (CFG.SERIES_JSON_SOURCES || []).map(s => s.replace('{ID}', seriesId));
+      const data = await DS.fetchJsonFromSources(sources);
+      let ep = null;
+      if(epNum != null) ep = data.find(e => Number(e.episode_number) === epNum);
+      if(!ep && idx != null && data[idx]) ep = data[idx];
+      return ep;
+    }
+
+    async function loadFromLatest(){
+      const res = await fetch(CFG.LATEST_EPISODES_JSON, { cache:'no-store' });
+      const data = await res.json();
+      if(idx != null && data[idx]) return data[idx];
+      if(epNum != null) return data.find(e => Number(e.episode_number) === epNum) || null;
+      return data[0] || null;
+    }
+
+    async function init(){
+      try{
+        setStatus('جاري تحميل بيانات الحلقة…');
+
+        // back behavior
+        if(seriesId){
+          backBtn.href = `episodes.html?id=${encodeURIComponent(seriesId)}&name=${encodeURIComponent(seriesName || '')}`;
+          backBtn.textContent = '← قائمة الحلقات';
+        }else{
+          backBtn.href = 'series.html';
+          backBtn.textContent = '← أحدث الحلقات';
+        }
+
+        let ep = null;
+        if(seriesId){
+          ep = await loadFromSeries();
+        }else{
+          ep = await loadFromLatest();
+        }
+
+        if(!ep){
+          setStatus('لم يتم العثور على الحلقة');
+          showError('تعذر العثور على بيانات الحلقة. تأكد من الرابط.');
+          return;
+        }
+
+        epTitle.textContent = ep.title || 'مشاهدة الحلقة';
+        setStatus('جاهز');
+
+        renderServers(ep.streams || []);
+      }catch(e){
+        console.error(e);
+        setStatus('فشل التحميل');
+        showError('حدث خطأ أثناء تحميل الحلقة. حاول مرة أخرى لاحقاً.');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

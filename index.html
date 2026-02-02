@@ -1,88 +1,253 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
-    <title>الحلقات</title>
-    <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
-    <style>
-        body { background: #141414; color: #fff; font-family: sans-serif; margin: 0; }
-        
-        header { 
-            padding: 20px; border-bottom: 2px solid #e50914; 
-            display: flex; justify-content: space-between; align-items: center; background: #000;
-        }
-        .btn-back { color: #fff; text-decoration: none; border: 1px solid #fff; padding: 6px 15px; border-radius: 4px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        
-        .ep-card { 
-            background: #222; border-radius: 6px; overflow: hidden; 
-            cursor: pointer; transition: 0.2s; text-align: center; border: 1px solid #333;
-        }
-        .ep-card:hover { background: #e50914; transform: translateY(-5px); }
-        
-        .ep-img { width: 100%; height: 100px; object-fit: cover; background: #000; }
-        .ep-title { padding: 10px; font-weight: bold; font-size: 0.9rem; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Design Society - مكتبة المسلسلات</title>
 
-        /* نفس زر التيليجرام */
-        .telegram-float {
-            position: fixed; bottom: 20px; right: 20px;
-            background: linear-gradient(45deg, #229ED9, #1c79a8);
-            color: white; padding: 12px 25px; border-radius: 50px;
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; box-shadow: 0 5px 20px rgba(34, 158, 217, 0.5);
-            z-index: 1000; font-weight: bold;
-        }
-        .telegram-icon { width: 24px; height: 24px; fill: white; }
-    </style>
+  <!-- ADS (لا يتم تعديلها) -->
+  <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
+
+  <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-    
-    <header>
-        <h2 id="s-title" style="margin:0; font-size:1.2rem;">جاري التحميل...</h2>
-        <a href="index.html" class="btn-back">الرئيسية</a>
-    </header>
 
-    <a href="https://t.me/qisatashk" target="_blank" class="telegram-float">
-        <svg class="telegram-icon" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.62 0zm4.91 5.6c.04 0 .09.01.13.02.34.09.53.48.43.82l-2.4 11.2c-.05.23-.23.41-.46.46-.35.08-.7-.14-.78-.49l-1.4-5.6-4.6 3.4c-.2.15-.48.14-.66-.03-.18-.17-.22-.45-.1-.66L8.8 9.6l-4.5-1.4c-.33-.1-.52-.46-.42-.8.09-.31.4-.49.71-.41l12.26 4.6zM9.8 10.6l1.2 4.4.9-3.8z"/></svg>
-        <span>تابع جديد الحلقات</span>
-    </a>
+  <div class="hero">
+    <div class="container">
+      <h1>Design Society Drama</h1>
+      <p>شاهد أحدث المسلسلات التركية (<span id="total-series">137</span> مسلسل)</p>
+      <div class="pill-row">
+        <a class="btn primary" href="series.html">أحدث الحلقات</a>
+        <span class="badge" id="progress-badge">0/137</span>
+      </div>
+    </div>
+  </div>
 
-    <div id="content" class="grid"></div>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <h2 style="margin:0; font-size:1.05rem; color:#fff;">المكتبة</h2>
+        <small id="status-text">جاري التحضير...</small>
+      </div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
-        const name = params.get('name');
-        if(name) document.getElementById('s-title').innerText = name;
+      <div class="actions">
+        <div class="search" style="max-width:520px;">
+          <input id="search" type="search" placeholder="ابحث باسم المسلسل..." autocomplete="off">
+          <span class="badge" id="loaded-badge">0</span>
+        </div>
+        <a class="btn" href="series.html">أحدث الحلقات</a>
+      </div>
+    </div>
+  </div>
 
-        async function load() {
-            if(!id) return;
-            try {
-                const res = await fetch(`https://raw.githubusercontent.com/AhmedKammel/jsondata/refs/heads/main/mosalsal${id}.json`);
-                const data = await res.json();
-                const box = document.getElementById('content');
-                
-                data.forEach(ep => {
-                    const div = document.createElement('div');
-                    div.className = 'ep-card';
-                    div.onclick = () => window.location.href = `watch.html?id=${id}&ep=${ep.episode_number}`;
-                    
-                    // استخدام weserv للصور المصغرة للحلقات أيضاً
-                    let thumb = ep.thumbnail.replace(/^https?:\/\//, '');
-                    let proxyThumb = `https://images.weserv.nl/?url=${encodeURIComponent(thumb)}&w=300&h=180&fit=cover`;
+  <div class="section">
+    <div class="container">
+      <div class="meta-row">
+        <div id="meta-left">تحميل تدريجي للحفاظ على السرعة</div>
+        <div class="actions">
+          <button class="btn" id="btn-retry" type="button">إعادة المحاولة</button>
+        </div>
+      </div>
 
-                    div.innerHTML = `
-                        <img class="ep-img" src="${proxyThumb}" onerror="this.src='https://via.placeholder.com/300x180/333/e50914'">
-                        <div class="ep-title">حلقة ${ep.episode_number}</div>
-                    `;
-                    box.appendChild(div);
-                });
-            } catch(e) {}
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div id="sentinel" class="notice">اسحب لأسفل لتحميل المزيد…</div>
+    </div>
+  </div>
+
+  <a href="https://t.me/qisatashk" target="_blank" class="telegram-float" rel="noopener">
+    <svg class="telegram-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.62 0zm4.91 5.6c.04 0 .09.01.13.02.34.09.53.48.43.82l-2.4 11.2c-.05.23-.23.41-.46.46-.35.08-.7-.14-.78-.49l-1.4-5.6-4.6 3.4c-.2.15-.48.14-.66-.03-.18-.17-.22-.45-.1-.66L8.8 9.6l-4.5-1.4c-.33-.1-.52-.46-.42-.8.09-.31.4-.49.71-.41l12.26 4.6zM9.8 10.6l1.2 4.4.9-3.8z"/></svg>
+    <span>تابع جديد الحلقات</span>
+  </a>
+
+  <div class="footer">© Design Society</div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/site.js"></script>
+  <script>
+    const CFG = window.DS_CONFIG;
+    const DS = window.DS;
+
+    const grid = DS.$('#grid');
+    const statusText = DS.$('#status-text');
+    const progressBadge = DS.$('#progress-badge');
+    const loadedBadge = DS.$('#loaded-badge');
+    const totalSpan = DS.$('#total-series');
+    const searchInput = DS.$('#search');
+    const btnRetry = DS.$('#btn-retry');
+    const sentinel = DS.$('#sentinel');
+
+    const total = Number(CFG.LIB_TOTAL_SERIES || 137);
+    totalSpan.textContent = String(total);
+
+    let nextId = 1;
+    let loadedCount = 0;
+    let loading = false;
+    let stop = false;
+
+    // ماب للأسماء للبحث السريع
+    const cardsById = new Map();
+
+    function setStatus(msg){ statusText.textContent = msg; }
+
+    function createSkeletonCard(){
+      const sk = document.createElement('div');
+      sk.className = 'skeleton shimmer';
+      sk.innerHTML = `
+        <div class="poster"></div>
+        <div class="card-body">
+          <div class="line"></div>
+          <div class="line sm"></div>
+        </div>
+      `;
+      return sk;
+    }
+
+    function applyFilter(){
+      const q = (searchInput.value || '').trim().toLowerCase();
+      for (const [id, obj] of cardsById.entries()){
+        const show = !q || obj.name.toLowerCase().includes(q);
+        obj.el.style.display = show ? '' : 'none';
+      }
+    }
+
+    async function fetchSeriesCard(id){
+      const sources = (CFG.SERIES_JSON_SOURCES || []).map(s => s.replace('{ID}', id));
+      const data = await DS.fetchJsonFromSources(sources);
+
+      const firstEp = data && data[0] ? data[0] : null;
+      const rawTitle = firstEp ? firstEp.title : `مسلسل رقم ${id}`;
+      const name = DS.cleanSeriesName(rawTitle) || `مسلسل رقم ${id}`;
+
+      const originalImage = firstEp && firstEp.thumbnail ? firstEp.thumbnail : '';
+      const candidates = DS.buildImageCandidates(originalImage, {w:300, h:450, fit:'cover'});
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.onclick = () => {
+        window.location.href = `episodes.html?id=${id}&name=${encodeURIComponent(name)}`;
+      };
+      card.onkeydown = (e) => {
+        if(e.key === 'Enter' || e.key === ' ') card.click();
+      };
+
+      const poster = document.createElement('div');
+      poster.className = 'poster';
+
+      const img = document.createElement('img');
+      img.alt = name;
+
+      DS.lazyMountImage(img, candidates, CFG.PLACEHOLDER_POSTER);
+
+      poster.appendChild(img);
+
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <h3 class="card-title">${DS.escapeHtml(name)}</h3>
+        <p class="card-sub">اضغط لعرض الحلقات</p>
+      `;
+
+      card.appendChild(poster);
+      card.appendChild(body);
+
+      return { el: card, name };
+    }
+
+    async function loadNextBatch(batchSize = 12){
+      if (loading || stop) return;
+      if (nextId > total) { stop = true; sentinel.textContent = 'تم تحميل كل المسلسلات ✅'; return; }
+
+      loading = true;
+      setStatus('جاري تحميل المزيد…');
+
+      const limit = DS.pLimit(6);
+
+      // Skeletons أولاً
+      const placeholders = [];
+      const startId = nextId;
+      const endId = Math.min(total, nextId + batchSize - 1);
+      for (let id = startId; id <= endId; id++){
+        const sk = createSkeletonCard();
+        placeholders.push({ id, sk });
+        grid.appendChild(sk);
+      }
+
+      const tasks = [];
+      for (let id = startId; id <= endId; id++){
+        tasks.push(limit(async () => {
+          try{
+            const cardObj = await fetchSeriesCard(id);
+            return { id, ok:true, cardObj };
+          }catch(e){
+            return { id, ok:false, err: e };
+          }
+        }));
+      }
+
+      const results = await Promise.all(tasks);
+
+      // استبدال الـ skeleton بالكروت
+      for (const r of results){
+        const ph = placeholders.find(p => p.id === r.id);
+        if (!ph) continue;
+
+        if (r.ok){
+          ph.sk.replaceWith(r.cardObj.el);
+          cardsById.set(r.id, { el: r.cardObj.el, name: r.cardObj.name });
+          loadedCount++;
+        }else{
+          // في حالة فشل تحميل JSON: نعرض كارت placeholder بدل ما الشبكة تفضل معلقة
+          const fallback = document.createElement('div');
+          fallback.className = 'card';
+          fallback.onclick = () => window.location.href = `episodes.html?id=${r.id}&name=${encodeURIComponent('مسلسل رقم ' + r.id)}`;
+          fallback.innerHTML = `
+            <div class="poster">
+              <img alt="Design Society" class="loaded" src="${CFG.PLACEHOLDER_POSTER}">
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">مسلسل رقم ${r.id}</h3>
+              <p class="card-sub">تعذر جلب البيانات الآن</p>
+            </div>
+          `;
+          ph.sk.replaceWith(fallback);
+          cardsById.set(r.id, { el: fallback, name: `مسلسل رقم ${r.id}` });
+          loadedCount++;
         }
-        load();
-    </script>
+      }
+
+      nextId = endId + 1;
+
+      progressBadge.textContent = `${loadedCount}/${total}`;
+      loadedBadge.textContent = String(loadedCount);
+
+      applyFilter();
+
+      setStatus(stop ? 'تم التحميل' : 'جاهز');
+      loading = false;
+
+      if (nextId > total){
+        stop = true;
+        sentinel.textContent = 'تم تحميل كل المسلسلات ✅';
+      }
+    }
+
+    // sentinel infinite load
+    const io = new IntersectionObserver((entries) => {
+      if(entries.some(e => e.isIntersecting)){
+        loadNextBatch(12);
+      }
+    }, { rootMargin: '800px' });
+    io.observe(sentinel);
+
+    searchInput.addEventListener('input', applyFilter);
+    btnRetry.addEventListener('click', () => loadNextBatch(12));
+
+    // first load
+    setStatus('جاري التحميل…');
+    loadNextBatch(18);
+  </script>
 </body>
 </html>

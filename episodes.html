@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>الحلقات</title>
+
+  <!-- ADS (لا يتم تعديلها) -->
+  <script src="https://quge5.com/88/tag.min.js" data-zone="207660" async data-cfasync="false"></script>
+
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <h2 id="series-title" style="margin:0; font-size:1.05rem; color:#fff;">قائمة الحلقات</h2>
+        <small id="status-text">جاري التحميل…</small>
+      </div>
+
+      <div class="actions">
+        <div class="search" style="max-width:520px;">
+          <input id="search" type="search" placeholder="ابحث برقم الحلقة…" autocomplete="off">
+          <span class="badge" id="count-badge">0</span>
+        </div>
+        <a class="btn" href="index.html">الرئيسية</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="meta-row">
+        <div class="actions">
+          <button class="btn" id="toggle-order" type="button">ترتيب: الأقدم → الأحدث</button>
+        </div>
+        <div id="meta-right" class="badge">—</div>
+      </div>
+
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div id="empty" class="notice" style="display:none;">لا توجد حلقات للعرض.</div>
+    </div>
+  </div>
+
+  <a href="https://t.me/qisatashk" target="_blank" class="telegram-float" rel="noopener">
+    <svg class="telegram-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.62 0zm4.91 5.6c.04 0 .09.01.13.02.34.09.53.48.43.82l-2.4 11.2c-.05.23-.23.41-.46.46-.35.08-.7-.14-.78-.49l-1.4-5.6-4.6 3.4c-.2.15-.48.14-.66-.03-.18-.17-.22-.45-.1-.66L8.8 9.6l-4.5-1.4c-.33-.1-.52-.46-.42-.8.09-.31.4-.49.71-.41l12.26 4.6zM9.8 10.6l1.2 4.4.9-3.8z"/></svg>
+    <span>تابع جديد الحلقات</span>
+  </a>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/site.js"></script>
+  <script>
+    const CFG = window.DS_CONFIG;
+    const DS = window.DS;
+
+    const params = new URLSearchParams(location.search);
+    const seriesId = params.get('id');
+    const seriesName = params.get('name') ? decodeURIComponent(params.get('name')) : '';
+
+    const titleEl = DS.$('#series-title');
+    const statusText = DS.$('#status-text');
+    const grid = DS.$('#grid');
+    const emptyEl = DS.$('#empty');
+    const searchInput = DS.$('#search');
+    const countBadge = DS.$('#count-badge');
+    const toggleOrderBtn = DS.$('#toggle-order');
+    const metaRight = DS.$('#meta-right');
+
+    if (seriesName) titleEl.textContent = seriesName;
+
+    let episodes = [];
+    let ascending = true;
+
+    function setStatus(msg){ statusText.textContent = msg; }
+
+    function render(){
+      grid.innerHTML = '';
+      const q = (searchInput.value || '').trim();
+
+      let list = episodes.slice();
+      list.sort((a,b) => ascending ? (a.episode_number - b.episode_number) : (b.episode_number - a.episode_number));
+
+      if(q){
+        list = list.filter(e => String(e.episode_number).includes(q));
+      }
+
+      countBadge.textContent = String(list.length);
+
+      if(!list.length){
+        emptyEl.style.display = '';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      const frag = document.createDocumentFragment();
+
+      for (const ep of list){
+        const num = ep.episode_number ?? '';
+        const title = ep.title || `حلقة ${num}`;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => {
+          window.location.href = `watch.html?id=${encodeURIComponent(seriesId)}&ep=${encodeURIComponent(num)}&name=${encodeURIComponent(seriesName || '')}`;
+        };
+
+        const poster = document.createElement('div');
+        poster.className = 'poster thumb';
+
+        const img = document.createElement('img');
+        img.alt = title;
+
+        const candidates = DS.buildImageCandidates(ep.thumbnail, {w:300, h:180, fit:'cover'});
+        DS.lazyMountImage(img, candidates, CFG.PLACEHOLDER_THUMB);
+
+        poster.appendChild(img);
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+        body.innerHTML = `
+          <h3 class="card-title">حلقة ${DS.escapeHtml(num)}</h3>
+          <p class="card-sub">${DS.escapeHtml(title)}</p>
+        `;
+
+        card.appendChild(poster);
+        card.appendChild(body);
+
+        frag.appendChild(card);
+      }
+
+      grid.appendChild(frag);
+    }
+
+    async function init(){
+      if(!seriesId){
+        setStatus('لا يوجد رقم مسلسل (id) في الرابط');
+        emptyEl.style.display = '';
+        emptyEl.textContent = 'الرابط غير صحيح. ارجع للرئيسية.';
+        return;
+      }
+
+      setStatus('جاري تحميل الحلقات…');
+      try{
+        const sources = (CFG.SERIES_JSON_SOURCES || []).map(s => s.replace('{ID}', seriesId));
+        episodes = await DS.fetchJsonFromSources(sources);
+
+        metaRight.textContent = `عدد الحلقات: ${episodes.length}`;
+
+        setStatus('جاهز');
+        render();
+      }catch(e){
+        console.error(e);
+        setStatus('فشل تحميل الحلقات');
+        emptyEl.style.display = '';
+        emptyEl.textContent = 'حدث خطأ أثناء تحميل الحلقات. حاول لاحقاً.';
+      }
+    }
+
+    searchInput.addEventListener('input', render);
+    toggleOrderBtn.addEventListener('click', () => {
+      ascending = !ascending;
+      toggleOrderBtn.textContent = ascending ? 'ترتيب: الأقدم → الأحدث' : 'ترتيب: الأحدث → الأقدم';
+      render();
+    });
+
+    init();
+  </script>
+</body>
+</html>
