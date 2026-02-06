@@ -1,252 +1,709 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Sports Club Management</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <title>Sports Club Management System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="app" class="app">
 
-    <div id="toast" class="toast hidden">Action Successful</div>
+    <!-- Toasts -->
+    <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
 
-    <section id="login-section" class="active-section">
-        <div class="login-container">
-            <div class="brand-logo">
-                <i class="fa-solid fa-dumbbell"></i> ELITE<span>CLUB</span>
-            </div>
-            
-            <div class="login-tabs">
-                <button class="tab-btn active" onclick="switchLoginTab('admin')">Admin</button>
-                <button class="tab-btn" onclick="switchLoginTab('player')">Player Portal</button>
-            </div>
-
-            <form id="admin-login-form" class="login-form">
-                <h3>Admin Access</h3>
-                <div class="input-group">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" id="admin-user" placeholder="Username" required>
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="admin-pass" placeholder="Password" required>
-                </div>
-                <button type="submit" class="cta-btn">Login to Dashboard</button>
-            </form>
-
-            <form id="player-login-form" class="login-form hidden">
-                <h3>Player Access</h3>
-                <div class="input-group">
-                    <i class="fa-solid fa-id-card"></i>
-                    <input type="text" id="player-code" placeholder="Enter Unique Access Code" maxlength="6" required>
-                </div>
-                <button type="submit" class="cta-btn">Enter Portal</button>
-            </form>
+    <!-- ===================== LOGIN VIEW ===================== -->
+    <section id="viewLogin" class="view view--active" aria-label="Login">
+      <div class="login">
+        <div class="login__brand">
+          <div class="brandMark" aria-hidden="true">
+            <span class="brandMark__dot"></span>
+            <span class="brandMark__line"></span>
+          </div>
+          <div class="login__brandText">
+            <h1>Sports Club</h1>
+            <p>Management System</p>
+          </div>
         </div>
+
+        <div class="card loginCard">
+          <div class="tabs" role="tablist" aria-label="Login role">
+            <button id="tabAdmin" class="tab tab--active" role="tab" aria-selected="true" aria-controls="panelAdmin">
+              Admin
+            </button>
+            <button id="tabPlayer" class="tab" role="tab" aria-selected="false" aria-controls="panelPlayer">
+              Player
+            </button>
+          </div>
+
+          <div class="tabPanels">
+            <div id="panelAdmin" class="tabPanel tabPanel--active" role="tabpanel" aria-labelledby="tabAdmin">
+              <form id="adminLoginForm" class="form">
+                <div class="formRow">
+                  <label class="label" for="adminUsername">Username</label>
+                  <input id="adminUsername" class="input" type="text" autocomplete="username" placeholder="adminahmed" required />
+                </div>
+                <div class="formRow">
+                  <label class="label" for="adminPassword">Password</label>
+                  <input id="adminPassword" class="input" type="password" autocomplete="current-password" placeholder="••••••••••" required />
+                </div>
+
+                <button class="btn btn--primary btn--wide" type="submit">
+                  <span class="btn__glow" aria-hidden="true"></span>
+                  Login as Admin
+                </button>
+              </form>
+            </div>
+
+            <div id="panelPlayer" class="tabPanel" role="tabpanel" aria-labelledby="tabPlayer">
+              <form id="playerLoginForm" class="form">
+                <div class="formRow">
+                  <label class="label" for="playerCode">Unique Access Code</label>
+                  <input id="playerCode" class="input" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" required />
+                  <p class="hint">Ask the admin for your 6-digit access code.</p>
+                </div>
+
+                <button class="btn btn--primary btn--wide" type="submit">
+                  <span class="btn__glow" aria-hidden="true"></span>
+                  Login as Player
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div id="loginError" class="alert alert--danger hidden" role="alert"></div>
+
+          <div class="loginFooter">
+            <div class="chip">
+              <span class="chip__dot chip__dot--neon" aria-hidden="true"></span>
+              Static / GitHub Pages Ready
+            </div>
+            <div class="chip">
+              <span class="chip__dot chip__dot--gold" aria-hidden="true"></span>
+              LocalStorage Database
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section id="admin-dashboard" class="hidden-section">
-        <nav class="sidebar">
-            <div class="brand">
-                <i class="fa-solid fa-dumbbell"></i> ELITE<span>ADMIN</span>
-            </div>
-            <ul>
-                <li onclick="renderAdminView('overview')" class="active-nav"><i class="fa-solid fa-chart-line"></i> Overview</li>
-                <li onclick="renderAdminView('members')"><i class="fa-solid fa-users"></i> Members</li>
-                <li onclick="renderAdminView('financials')"><i class="fa-solid fa-sack-dollar"></i> Financials</li>
-                <li onclick="exportBackupData()" style="color: #ffd700;"><i class="fa-solid fa-file-export"></i> Backup Data</li>
-                <li onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
-            </ul>
-        </nav>
-
-        <main class="main-content">
-            <header>
-                <h2 id="page-title">Dashboard Overview</h2>
-                <div class="admin-profile">
-                    <span>Admin Ahmed</span>
-                    <div class="avatar">A</div>
-                </div>
-            </header>
-
-            <div id="view-overview" class="admin-view active-view">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="icon-box blue"><i class="fa-solid fa-users"></i></div>
-                        <div class="info">
-                            <h3>Total Members</h3>
-                            <p id="total-members-count">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon-box green"><i class="fa-solid fa-money-bill-wave"></i></div>
-                        <div class="info">
-                            <h3>Total Revenue</h3>
-                            <p id="total-revenue">$0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon-box red"><i class="fa-solid fa-arrow-trend-down"></i></div>
-                        <div class="info">
-                            <h3>Expenses</h3>
-                            <p id="total-expenses">$0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon-box gold"><i class="fa-solid fa-wallet"></i></div>
-                        <div class="info">
-                            <h3>Net Profit</h3>
-                            <p id="net-profit">$0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <h3>Profit Analysis</h3>
-                    <div class="bar-chart">
-                        <div class="bar-group">
-                            <span>Income</span>
-                            <div class="bar-track"><div class="bar-fill blue-fill" id="bar-income" style="width: 0%"></div></div>
-                        </div>
-                        <div class="bar-group">
-                            <span>Expense</span>
-                            <div class="bar-track"><div class="bar-fill red-fill" id="bar-expense" style="width: 0%"></div></div>
-                        </div>
-                    </div>
-                </div>
+    <!-- ===================== ADMIN VIEW ===================== -->
+    <section id="viewAdmin" class="view" aria-label="Admin dashboard">
+      <div class="layout">
+        <aside id="sidebar" class="sidebar" aria-label="Sidebar Navigation">
+          <div class="sidebar__top">
+            <div class="sidebar__brand">
+              <div class="brandMark brandMark--small" aria-hidden="true">
+                <span class="brandMark__dot"></span>
+                <span class="brandMark__line"></span>
+              </div>
+              <div>
+                <div class="sidebar__title">Club Admin</div>
+                <div class="sidebar__subtitle">High-End Dashboard</div>
+              </div>
             </div>
 
-            <div id="view-members" class="admin-view">
-                <div class="toolbar">
-                    <input type="text" id="search-member" placeholder="Search by name..." onkeyup="filterMembers()">
-                    <button class="cta-btn small" onclick="openModal('add-member-modal')">+ Add New Member</button>
-                </div>
+            <button id="sidebarClose" class="iconBtn iconBtn--ghost sidebar__close" type="button" aria-label="Close sidebar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
 
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name (ASC)</th>
-                                <th>Access Code</th>
-                                <th>Group</th>
-                                <th>Expiry Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="members-table-body">
-                            </tbody>
+          <nav class="nav">
+            <button class="nav__item nav__item--active" type="button" data-admin-page="dashboard">
+              <span class="nav__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6V11h-6v9Zm0-18v7h6V2h-6Z" fill="currentColor"/>
+                </svg>
+              </span>
+              Dashboard
+            </button>
+
+            <button class="nav__item" type="button" data-admin-page="members">
+              <span class="nav__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V20h6v-3.5C23 14.17 18.33 13 16 13Z" fill="currentColor"/>
+                </svg>
+              </span>
+              Members
+            </button>
+
+            <button class="nav__item" type="button" data-admin-page="financials">
+              <span class="nav__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 1a2 2 0 0 0-2 2v1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V6a2 2 0 0 0-2-2h-2V3a2 2 0 0 0-2-2Zm-2 5h4V3h-4v3Zm-2 2h8v2H8V8Zm0 4h8v2H8v-2Z" fill="currentColor"/>
+                </svg>
+              </span>
+              Financials
+            </button>
+
+            <button class="nav__item" type="button" data-admin-page="settings">
+              <span class="nav__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.027 7.027 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 1h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 7.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.3.6.22l2.39-.96c.51.39 1.06.71 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z" fill="currentColor"/>
+                </svg>
+              </span>
+              Settings
+            </button>
+          </nav>
+
+          <div class="sidebar__bottom">
+            <div class="sidebar__meta">
+              <div class="pill pill--neon">
+                <span class="pill__dot" aria-hidden="true"></span>
+                <span id="adminNow"></span>
+              </div>
+            </div>
+
+            <button id="adminLogoutBtn" class="btn btn--ghost btn--wide" type="button">
+              Logout
+            </button>
+          </div>
+        </aside>
+
+        <div class="main">
+          <header class="topbar">
+            <div class="topbar__left">
+              <button id="sidebarOpen" class="iconBtn iconBtn--ghost" type="button" aria-label="Open sidebar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+
+              <div>
+                <div class="topbar__title" id="adminPageTitle">Dashboard</div>
+                <div class="topbar__subtitle" id="adminPageSubtitle">Overview & analytics</div>
+              </div>
+            </div>
+
+            <div class="topbar__right">
+              <div class="chip chip--outline">
+                <span class="chip__dot chip__dot--neon" aria-hidden="true"></span>
+                <span id="dbStatus">DB: Local</span>
+              </div>
+            </div>
+          </header>
+
+          <main class="content">
+            <!-- Dashboard -->
+            <section id="adminPageDashboard" class="page page--active" aria-label="Dashboard">
+              <div class="grid grid--cards">
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Total Active Members</div>
+                    <div class="badge badge--success">Active</div>
+                  </div>
+                  <div id="statActiveMembers" class="statCard__value">0</div>
+                  <div id="statMembersHint" class="statCard__hint">0 expired</div>
+                </article>
+
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Revenue (This Month)</div>
+                    <div class="badge badge--neon">Auto</div>
+                  </div>
+                  <div id="statRevenue" class="statCard__value">EGP 0</div>
+                  <div class="statCard__hint">From subscriptions & renewals</div>
+                </article>
+
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Expenses (This Month)</div>
+                    <div class="badge badge--gold">Manual</div>
+                  </div>
+                  <div id="statExpenses" class="statCard__value">EGP 0</div>
+                  <div class="statCard__hint">Added by admin</div>
+                </article>
+
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Net Profit (This Month)</div>
+                    <div id="statProfitBadge" class="badge badge--success">Profit</div>
+                  </div>
+                  <div id="statProfit" class="statCard__value">EGP 0</div>
+                  <div id="statProfitHint" class="statCard__hint">Revenue - Expenses</div>
+                </article>
+              </div>
+
+              <div class="grid grid--two">
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Profit vs Loss</h2>
+                    <p class="muted">Visual breakdown for the current month</p>
+                  </div>
+
+                  <div class="barChart" aria-label="Profit vs Loss chart">
+                    <div class="barRow">
+                      <div class="barRow__label">Revenue</div>
+                      <div class="barTrack">
+                        <div id="barRevenue" class="barFill barFill--neon" style="width:0%"></div>
+                      </div>
+                      <div id="barRevenueVal" class="barRow__value">EGP 0</div>
+                    </div>
+
+                    <div class="barRow">
+                      <div class="barRow__label">Expenses</div>
+                      <div class="barTrack">
+                        <div id="barExpenses" class="barFill barFill--gold" style="width:0%"></div>
+                      </div>
+                      <div id="barExpensesVal" class="barRow__value">EGP 0</div>
+                    </div>
+
+                    <div class="barRow">
+                      <div class="barRow__label">Net</div>
+                      <div class="barTrack">
+                        <div id="barNet" class="barFill barFill--success" style="width:0%"></div>
+                      </div>
+                      <div id="barNetVal" class="barRow__value">EGP 0</div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Groups Overview</h2>
+                    <p class="muted">Members distribution by training group</p>
+                  </div>
+
+                  <div id="groupsOverview" class="groupsOverview" aria-label="Groups overview">
+                    <!-- populated by JS -->
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <!-- Members -->
+            <section id="adminPageMembers" class="page" aria-label="Members management">
+              <div class="grid grid--two">
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Add New Player</h2>
+                    <p class="muted">Auto-generates a 6-digit access code</p>
+                  </div>
+
+                  <form id="addPlayerForm" class="form form--dense">
+                    <div class="formGrid">
+                      <div class="formRow">
+                        <label class="label" for="playerNameInput">Name</label>
+                        <input id="playerNameInput" class="input" type="text" placeholder="Player name" required />
+                      </div>
+
+                      <div class="formRow">
+                        <label class="label" for="playerAgeInput">Age</label>
+                        <input id="playerAgeInput" class="input" type="number" min="4" max="99" placeholder="Age" required />
+                      </div>
+
+                      <div class="formRow">
+                        <label class="label" for="playerPhoneInput">Phone</label>
+                        <input id="playerPhoneInput" class="input" type="tel" placeholder="+20..." required />
+                      </div>
+
+                      <div class="formRow">
+                        <label class="label" for="playerGroupSelect">Group</label>
+                        <select id="playerGroupSelect" class="select"></select>
+                      </div>
+
+                      <div class="formRow">
+                        <label class="label" for="playerSubscriptionSelect">Subscription Type</label>
+                        <select id="playerSubscriptionSelect" class="select"></select>
+                      </div>
+
+                      <div class="formRow">
+                        <label class="label" for="playerStartDateInput">Start Date</label>
+                        <input id="playerStartDateInput" class="input" type="date" required />
+                      </div>
+
+                      <div class="formRow formRow--span2">
+                        <label class="label" for="generatedCodeInput">Generated Access Code</label>
+                        <div class="inputGroup">
+                          <input id="generatedCodeInput" class="input" type="text" value="—" readonly />
+                          <button id="copyCodeBtn" class="btn btn--ghost" type="button" title="Copy code">
+                            Copy
+                          </button>
+                        </div>
+                        <p class="hint">Code is generated on creation.</p>
+                      </div>
+                    </div>
+
+                    <button class="btn btn--primary btn--wide" type="submit">
+                      <span class="btn__glow" aria-hidden="true"></span>
+                      Create Player
+                    </button>
+                  </form>
+                </section>
+
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Members List</h2>
+                    <p class="muted">Sorted by <b>Name (ASC)</b></p>
+                  </div>
+
+                  <div class="tableTools">
+                    <div class="inputGroup">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                          <path d="M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm11 3-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      </span>
+                      <input id="memberSearchInput" class="input input--withIcon" type="text" placeholder="Search by name / code / phone..." />
+                    </div>
+
+                    <button id="exportMembersBtn" class="btn btn--ghost" type="button" title="Export full DB JSON (Backup)">
+                      Export Backup JSON
+                    </button>
+                  </div>
+
+                  <div class="tableWrap" role="region" aria-label="Players table" tabindex="0">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Code</th>
+                          <th>Group</th>
+                          <th>Expiry Date</th>
+                          <th>Status</th>
+                          <th class="thActions">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="playersTbody">
+                        <!-- rows -->
+                      </tbody>
                     </table>
-                </div>
-            </div>
+                  </div>
 
-            <div id="view-financials" class="admin-view">
-                <div class="financial-form">
-                    <h3>Log Expense</h3>
-                    <form id="expense-form">
-                        <input type="text" id="expense-desc" placeholder="Expense Description (e.g., Electricity)" required>
-                        <input type="number" id="expense-amount" placeholder="Amount ($)" required>
-                        <button type="submit" class="cta-btn small">Add Expense</button>
-                    </form>
-                </div>
-                <div class="table-container">
-                    <h3>Expense History</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expense-table-body">
-                            </tbody>
+                  <div id="playersEmpty" class="emptyState hidden">
+                    No players found.
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <!-- Financials -->
+            <section id="adminPageFinancials" class="page" aria-label="Financials">
+              <div class="grid grid--cards">
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Revenue (This Month)</div>
+                    <div class="badge badge--neon">Auto</div>
+                  </div>
+                  <div id="finRevenue" class="statCard__value">EGP 0</div>
+                  <div class="statCard__hint">Sum of payments in current month</div>
+                </article>
+
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Expenses (This Month)</div>
+                    <div class="badge badge--gold">Manual</div>
+                  </div>
+                  <div id="finExpenses" class="statCard__value">EGP 0</div>
+                  <div class="statCard__hint">Sum of expenses in current month</div>
+                </article>
+
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Net Profit (This Month)</div>
+                    <div id="finProfitBadge" class="badge badge--success">Profit</div>
+                  </div>
+                  <div id="finProfit" class="statCard__value">EGP 0</div>
+                  <div id="finProfitHint" class="statCard__hint">Revenue - Expenses</div>
+                </article>
+
+                <article class="card statCard">
+                  <div class="statCard__top">
+                    <div class="statCard__label">Total Members</div>
+                    <div class="badge badge--muted">All</div>
+                  </div>
+                  <div id="finMembers" class="statCard__value">0</div>
+                  <div class="statCard__hint">Active + Expired</div>
+                </article>
+              </div>
+
+              <div class="grid grid--two">
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Add Monthly Expense</h2>
+                    <p class="muted">Track rent, utilities, salaries, equipment, etc.</p>
+                  </div>
+
+                  <form id="expenseForm" class="form form--dense">
+                    <div class="formGrid">
+                      <div class="formRow">
+                        <label class="label" for="expenseAmountInput">Amount (EGP)</label>
+                        <input id="expenseAmountInput" class="input" type="number" min="0" step="1" placeholder="0" required />
+                      </div>
+
+                      <div class="formRow">
+                        <label class="label" for="expenseDateInput">Date</label>
+                        <input id="expenseDateInput" class="input" type="date" required />
+                      </div>
+
+                      <div class="formRow formRow--span2">
+                        <label class="label" for="expenseNoteInput">Note</label>
+                        <input id="expenseNoteInput" class="input" type="text" placeholder="e.g., Rent / Equipment / Staff salary..." required />
+                      </div>
+                    </div>
+
+                    <button class="btn btn--primary btn--wide" type="submit">
+                      <span class="btn__glow" aria-hidden="true"></span>
+                      Add Expense
+                    </button>
+                  </form>
+                </section>
+
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Expenses (This Month)</h2>
+                    <p class="muted">Manage entries</p>
+                  </div>
+
+                  <div class="tableWrap" role="region" aria-label="Expenses table" tabindex="0">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Note</th>
+                          <th>Amount</th>
+                          <th class="thActions">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="expensesTbody"></tbody>
                     </table>
+                  </div>
+
+                  <div id="expensesEmpty" class="emptyState hidden">
+                    No expenses for this month yet.
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <!-- Settings -->
+            <section id="adminPageSettings" class="page" aria-label="Settings">
+              <div class="grid grid--two">
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Backup & Restore</h2>
+                    <p class="muted">Export / Import your localStorage database as JSON</p>
+                  </div>
+
+                  <div class="stack">
+                    <button id="exportDbBtn" class="btn btn--primary btn--wide" type="button">
+                      <span class="btn__glow" aria-hidden="true"></span>
+                      Export Backup JSON
+                    </button>
+
+                    <div class="divider"></div>
+
+                    <div class="formRow">
+                      <label class="label" for="importDbFile">Import Backup JSON</label>
+                      <input id="importDbFile" class="input" type="file" accept="application/json,.json" />
+                      <p class="hint">Import will overwrite current data.</p>
+                    </div>
+
+                    <button id="importDbBtn" class="btn btn--ghost btn--wide" type="button">
+                      Import JSON
+                    </button>
+                  </div>
+                </section>
+
+                <section class="card card--padded">
+                  <div class="card__header">
+                    <h2 class="h2">Groups / Classes</h2>
+                    <p class="muted">Assign players to training groups</p>
+                  </div>
+
+                  <div class="stack">
+                    <div class="inputGroup">
+                      <input id="newGroupInput" class="input" type="text" placeholder="e.g., Morning A" />
+                      <button id="addGroupBtn" class="btn btn--ghost" type="button">Add</button>
+                    </div>
+
+                    <ul id="groupsList" class="list"></ul>
+                    <p class="hint">You can delete empty groups. If a group is used, reassign members first.</p>
+                  </div>
+                </section>
+              </div>
+
+              <section class="card card--padded dangerZone">
+                <div class="card__header">
+                  <h2 class="h2">Danger Zone</h2>
+                  <p class="muted">Reset the local database (cannot be undone)</p>
                 </div>
-            </div>
-        </main>
+
+                <button id="resetDbBtn" class="btn btn--danger" type="button">
+                  Reset All Data
+                </button>
+              </section>
+            </section>
+          </main>
+        </div>
+      </div>
     </section>
 
-    <section id="player-portal" class="hidden-section">
-        <header class="player-header">
-            <div class="brand">
-                <i class="fa-solid fa-dumbbell"></i> ELITE<span>MEMBER</span>
+    <!-- ===================== PLAYER VIEW ===================== -->
+    <section id="viewPlayer" class="view" aria-label="Player portal">
+      <div class="playerLayout">
+        <header class="topbar topbar--player">
+          <div class="topbar__left">
+            <div class="brandInline">
+              <div class="brandMark brandMark--small" aria-hidden="true">
+                <span class="brandMark__dot"></span>
+                <span class="brandMark__line"></span>
+              </div>
+              <div>
+                <div class="topbar__title">Player Portal</div>
+                <div class="topbar__subtitle">Your subscription & attendance</div>
+              </div>
             </div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+          </div>
+
+          <div class="topbar__right">
+            <div class="chip chip--outline">
+              <span class="chip__dot chip__dot--gold" aria-hidden="true"></span>
+              <span id="playerNow"></span>
+            </div>
+            <button id="playerLogoutBtn" class="btn btn--ghost" type="button">Logout</button>
+          </div>
         </header>
-        
-        <div class="player-container">
-            <div class="welcome-banner">
-                <h1 id="player-welcome-name">Welcome back!</h1>
-                <p>Track your progress and subscription.</p>
-            </div>
 
-            <div class="player-grid">
-                <div class="player-card" id="status-card">
-                    <h3>Subscription Status</h3>
-                    <div class="status-indicator" id="player-status-indicator">Active</div>
-                    <p>Expires on: <span id="player-expiry-date">--/--/----</span></p>
+        <main class="content content--player">
+          <div class="grid grid--two">
+            <section class="card card--padded">
+              <div class="card__header">
+                <h2 class="h2">Welcome</h2>
+                <p class="muted">Personal dashboard</p>
+              </div>
+
+              <div class="playerHeader">
+                <div class="avatar" aria-hidden="true">
+                  <span id="playerAvatarLetter">P</span>
+                </div>
+                <div>
+                  <div class="playerName" id="playerGreetingName">Player</div>
+                  <div class="playerMeta">
+                    <span class="chip chip--outline">
+                      <span class="chip__dot chip__dot--neon" aria-hidden="true"></span>
+                      Code: <span id="playerCodeText">000000</span>
+                    </span>
+                    <span class="chip chip--outline">
+                      Group: <span id="playerGroupText">—</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="statusCard">
+                <div class="statusCard__row">
+                  <div>
+                    <div class="statusCard__label">Subscription Valid Until</div>
+                    <div id="playerValidUntil" class="statusCard__value">—</div>
+                  </div>
+                  <div id="playerStatusBadge" class="badge badge--success">Active</div>
+                </div>
+                <div class="statusCard__divider"></div>
+                <div class="statusCard__row statusCard__row--compact">
+                  <div class="muted">Subscription Type</div>
+                  <div id="playerSubType" class="mono">—</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card card--padded">
+              <div class="card__header">
+                <h2 class="h2">Attendance</h2>
+                <p class="muted">Tap check-in once per day</p>
+              </div>
+
+              <div class="stack">
+                <button id="checkInBtn" class="btn btn--primary btn--wide" type="button">
+                  <span class="btn__glow" aria-hidden="true"></span>
+                  Check-in Today
+                </button>
+
+                <div class="divider"></div>
+
+                <div class="sectionTitleRow">
+                  <div class="sectionTitle">Recent Check-ins</div>
+                  <div id="attendanceCount" class="chip chip--outline">0</div>
                 </div>
 
-                <div class="player-card">
-                    <h3>Daily Check-in</h3>
-                    <p>Log your attendance for today.</p>
-                    <button id="checkin-btn" class="cta-btn" onclick="playerCheckIn()">Check In Now</button>
-                    <p id="last-checkin-msg" class="small-text"></p>
+                <ul id="attendanceList" class="list list--compact"></ul>
+
+                <div id="attendanceEmpty" class="emptyState hidden">
+                  No attendance records yet.
                 </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="card card--padded">
+            <div class="card__header">
+              <h2 class="h2">Payment History</h2>
+              <p class="muted">Your last payments / renewals</p>
             </div>
 
-            <div class="player-history">
-                <h3>Payment & Renewal History</h3>
-                <ul id="player-payment-list">
-                    </ul>
+            <div class="tableWrap" role="region" aria-label="Payment history table" tabindex="0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody id="paymentTbody"></tbody>
+              </table>
             </div>
-        </div>
+
+            <div id="paymentsEmpty" class="emptyState hidden">
+              No payments found.
+            </div>
+          </section>
+        </main>
+      </div>
     </section>
 
-    <div id="add-member-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('add-member-modal')">&times;</span>
-            <h2>Register New Member</h2>
-            <form id="add-member-form">
-                <label>Full Name</label>
-                <input type="text" id="new-name" required>
-                
-                <div class="row">
-                    <div class="col">
-                        <label>Age</label>
-                        <input type="number" id="new-age" required>
-                    </div>
-                    <div class="col">
-                        <label>Group</label>
-                        <select id="new-group">
-                            <option value="Morning A">Morning A</option>
-                            <option value="Evening B">Evening B</option>
-                            <option value="Weekend C">Weekend C</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label>Phone</label>
-                <input type="tel" id="new-phone" required>
-
-                <div class="row">
-                    <div class="col">
-                        <label>Cost ($)</label>
-                        <input type="number" id="new-cost" value="50" required>
-                    </div>
-                    <div class="col">
-                        <label>Duration (Months)</label>
-                        <input type="number" id="new-duration" value="1" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="cta-btn full-width">Create Member & Generate Code</button>
-            </form>
+    <!-- ===================== MODAL ===================== -->
+    <div id="modalOverlay" class="modalOverlay hidden" role="dialog" aria-modal="true" aria-label="Modal">
+      <div class="modal">
+        <div class="modal__header">
+          <div>
+            <div id="modalTitle" class="modal__title">Modal</div>
+            <div id="modalSubtitle" class="modal__subtitle muted"></div>
+          </div>
+          <button id="modalCloseBtn" class="iconBtn iconBtn--ghost" type="button" aria-label="Close modal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
+
+        <div id="modalBody" class="modal__body"></div>
+
+        <div class="modal__footer">
+          <button id="modalSecondaryBtn" class="btn btn--ghost" type="button">Cancel</button>
+          <button id="modalPrimaryBtn" class="btn btn--primary" type="button">
+            <span class="btn__glow" aria-hidden="true"></span>
+            Save
+          </button>
+        </div>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Sidebar overlay for mobile -->
+    <div id="backdrop" class="backdrop hidden" aria-hidden="true"></div>
+
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
