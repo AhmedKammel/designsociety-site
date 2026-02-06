@@ -1,709 +1,749 @@
-<!-- index.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1a1a1a" />
-  <title>Sports Club Management System</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="app" class="app">
-
-    <!-- Toasts -->
-    <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
-
-    <!-- ===================== LOGIN VIEW ===================== -->
-    <section id="viewLogin" class="view view--active" aria-label="Login">
-      <div class="login">
-        <div class="login__brand">
-          <div class="brandMark" aria-hidden="true">
-            <span class="brandMark__dot"></span>
-            <span class="brandMark__line"></span>
-          </div>
-          <div class="login__brandText">
-            <h1>Sports Club</h1>
-            <p>Management System</p>
-          </div>
-        </div>
-
-        <div class="card loginCard">
-          <div class="tabs" role="tablist" aria-label="Login role">
-            <button id="tabAdmin" class="tab tab--active" role="tab" aria-selected="true" aria-controls="panelAdmin">
-              Admin
-            </button>
-            <button id="tabPlayer" class="tab" role="tab" aria-selected="false" aria-controls="panelPlayer">
-              Player
-            </button>
-          </div>
-
-          <div class="tabPanels">
-            <div id="panelAdmin" class="tabPanel tabPanel--active" role="tabpanel" aria-labelledby="tabAdmin">
-              <form id="adminLoginForm" class="form">
-                <div class="formRow">
-                  <label class="label" for="adminUsername">Username</label>
-                  <input id="adminUsername" class="input" type="text" autocomplete="username" placeholder="adminahmed" required />
-                </div>
-                <div class="formRow">
-                  <label class="label" for="adminPassword">Password</label>
-                  <input id="adminPassword" class="input" type="password" autocomplete="current-password" placeholder="••••••••••" required />
-                </div>
-
-                <button class="btn btn--primary btn--wide" type="submit">
-                  <span class="btn__glow" aria-hidden="true"></span>
-                  Login as Admin
-                </button>
-              </form>
-            </div>
-
-            <div id="panelPlayer" class="tabPanel" role="tabpanel" aria-labelledby="tabPlayer">
-              <form id="playerLoginForm" class="form">
-                <div class="formRow">
-                  <label class="label" for="playerCode">Unique Access Code</label>
-                  <input id="playerCode" class="input" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" required />
-                  <p class="hint">Ask the admin for your 6-digit access code.</p>
-                </div>
-
-                <button class="btn btn--primary btn--wide" type="submit">
-                  <span class="btn__glow" aria-hidden="true"></span>
-                  Login as Player
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <div id="loginError" class="alert alert--danger hidden" role="alert"></div>
-
-          <div class="loginFooter">
-            <div class="chip">
-              <span class="chip__dot chip__dot--neon" aria-hidden="true"></span>
-              Static / GitHub Pages Ready
-            </div>
-            <div class="chip">
-              <span class="chip__dot chip__dot--gold" aria-hidden="true"></span>
-              LocalStorage Database
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== ADMIN VIEW ===================== -->
-    <section id="viewAdmin" class="view" aria-label="Admin dashboard">
-      <div class="layout">
-        <aside id="sidebar" class="sidebar" aria-label="Sidebar Navigation">
-          <div class="sidebar__top">
-            <div class="sidebar__brand">
-              <div class="brandMark brandMark--small" aria-hidden="true">
-                <span class="brandMark__dot"></span>
-                <span class="brandMark__line"></span>
-              </div>
-              <div>
-                <div class="sidebar__title">Club Admin</div>
-                <div class="sidebar__subtitle">High-End Dashboard</div>
-              </div>
-            </div>
-
-            <button id="sidebarClose" class="iconBtn iconBtn--ghost sidebar__close" type="button" aria-label="Close sidebar">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-          </div>
-
-          <nav class="nav">
-            <button class="nav__item nav__item--active" type="button" data-admin-page="dashboard">
-              <span class="nav__icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6V11h-6v9Zm0-18v7h6V2h-6Z" fill="currentColor"/>
-                </svg>
-              </span>
-              Dashboard
-            </button>
-
-            <button class="nav__item" type="button" data-admin-page="members">
-              <span class="nav__icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V20h6v-3.5C23 14.17 18.33 13 16 13Z" fill="currentColor"/>
-                </svg>
-              </span>
-              Members
-            </button>
-
-            <button class="nav__item" type="button" data-admin-page="financials">
-              <span class="nav__icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 1a2 2 0 0 0-2 2v1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V6a2 2 0 0 0-2-2h-2V3a2 2 0 0 0-2-2Zm-2 5h4V3h-4v3Zm-2 2h8v2H8V8Zm0 4h8v2H8v-2Z" fill="currentColor"/>
-                </svg>
-              </span>
-              Financials
-            </button>
-
-            <button class="nav__item" type="button" data-admin-page="settings">
-              <span class="nav__icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.027 7.027 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 1h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 7.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.3.6.22l2.39-.96c.51.39 1.06.71 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z" fill="currentColor"/>
-                </svg>
-              </span>
-              Settings
-            </button>
-          </nav>
-
-          <div class="sidebar__bottom">
-            <div class="sidebar__meta">
-              <div class="pill pill--neon">
-                <span class="pill__dot" aria-hidden="true"></span>
-                <span id="adminNow"></span>
-              </div>
-            </div>
-
-            <button id="adminLogoutBtn" class="btn btn--ghost btn--wide" type="button">
-              Logout
-            </button>
-          </div>
-        </aside>
-
-        <div class="main">
-          <header class="topbar">
-            <div class="topbar__left">
-              <button id="sidebarOpen" class="iconBtn iconBtn--ghost" type="button" aria-label="Open sidebar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </button>
-
-              <div>
-                <div class="topbar__title" id="adminPageTitle">Dashboard</div>
-                <div class="topbar__subtitle" id="adminPageSubtitle">Overview & analytics</div>
-              </div>
-            </div>
-
-            <div class="topbar__right">
-              <div class="chip chip--outline">
-                <span class="chip__dot chip__dot--neon" aria-hidden="true"></span>
-                <span id="dbStatus">DB: Local</span>
-              </div>
-            </div>
-          </header>
-
-          <main class="content">
-            <!-- Dashboard -->
-            <section id="adminPageDashboard" class="page page--active" aria-label="Dashboard">
-              <div class="grid grid--cards">
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Total Active Members</div>
-                    <div class="badge badge--success">Active</div>
-                  </div>
-                  <div id="statActiveMembers" class="statCard__value">0</div>
-                  <div id="statMembersHint" class="statCard__hint">0 expired</div>
-                </article>
-
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Revenue (This Month)</div>
-                    <div class="badge badge--neon">Auto</div>
-                  </div>
-                  <div id="statRevenue" class="statCard__value">EGP 0</div>
-                  <div class="statCard__hint">From subscriptions & renewals</div>
-                </article>
-
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Expenses (This Month)</div>
-                    <div class="badge badge--gold">Manual</div>
-                  </div>
-                  <div id="statExpenses" class="statCard__value">EGP 0</div>
-                  <div class="statCard__hint">Added by admin</div>
-                </article>
-
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Net Profit (This Month)</div>
-                    <div id="statProfitBadge" class="badge badge--success">Profit</div>
-                  </div>
-                  <div id="statProfit" class="statCard__value">EGP 0</div>
-                  <div id="statProfitHint" class="statCard__hint">Revenue - Expenses</div>
-                </article>
-              </div>
-
-              <div class="grid grid--two">
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Profit vs Loss</h2>
-                    <p class="muted">Visual breakdown for the current month</p>
-                  </div>
-
-                  <div class="barChart" aria-label="Profit vs Loss chart">
-                    <div class="barRow">
-                      <div class="barRow__label">Revenue</div>
-                      <div class="barTrack">
-                        <div id="barRevenue" class="barFill barFill--neon" style="width:0%"></div>
-                      </div>
-                      <div id="barRevenueVal" class="barRow__value">EGP 0</div>
-                    </div>
-
-                    <div class="barRow">
-                      <div class="barRow__label">Expenses</div>
-                      <div class="barTrack">
-                        <div id="barExpenses" class="barFill barFill--gold" style="width:0%"></div>
-                      </div>
-                      <div id="barExpensesVal" class="barRow__value">EGP 0</div>
-                    </div>
-
-                    <div class="barRow">
-                      <div class="barRow__label">Net</div>
-                      <div class="barTrack">
-                        <div id="barNet" class="barFill barFill--success" style="width:0%"></div>
-                      </div>
-                      <div id="barNetVal" class="barRow__value">EGP 0</div>
-                    </div>
-                  </div>
-                </section>
-
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Groups Overview</h2>
-                    <p class="muted">Members distribution by training group</p>
-                  </div>
-
-                  <div id="groupsOverview" class="groupsOverview" aria-label="Groups overview">
-                    <!-- populated by JS -->
-                  </div>
-                </section>
-              </div>
-            </section>
-
-            <!-- Members -->
-            <section id="adminPageMembers" class="page" aria-label="Members management">
-              <div class="grid grid--two">
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Add New Player</h2>
-                    <p class="muted">Auto-generates a 6-digit access code</p>
-                  </div>
-
-                  <form id="addPlayerForm" class="form form--dense">
-                    <div class="formGrid">
-                      <div class="formRow">
-                        <label class="label" for="playerNameInput">Name</label>
-                        <input id="playerNameInput" class="input" type="text" placeholder="Player name" required />
-                      </div>
-
-                      <div class="formRow">
-                        <label class="label" for="playerAgeInput">Age</label>
-                        <input id="playerAgeInput" class="input" type="number" min="4" max="99" placeholder="Age" required />
-                      </div>
-
-                      <div class="formRow">
-                        <label class="label" for="playerPhoneInput">Phone</label>
-                        <input id="playerPhoneInput" class="input" type="tel" placeholder="+20..." required />
-                      </div>
-
-                      <div class="formRow">
-                        <label class="label" for="playerGroupSelect">Group</label>
-                        <select id="playerGroupSelect" class="select"></select>
-                      </div>
-
-                      <div class="formRow">
-                        <label class="label" for="playerSubscriptionSelect">Subscription Type</label>
-                        <select id="playerSubscriptionSelect" class="select"></select>
-                      </div>
-
-                      <div class="formRow">
-                        <label class="label" for="playerStartDateInput">Start Date</label>
-                        <input id="playerStartDateInput" class="input" type="date" required />
-                      </div>
-
-                      <div class="formRow formRow--span2">
-                        <label class="label" for="generatedCodeInput">Generated Access Code</label>
-                        <div class="inputGroup">
-                          <input id="generatedCodeInput" class="input" type="text" value="—" readonly />
-                          <button id="copyCodeBtn" class="btn btn--ghost" type="button" title="Copy code">
-                            Copy
-                          </button>
-                        </div>
-                        <p class="hint">Code is generated on creation.</p>
-                      </div>
-                    </div>
-
-                    <button class="btn btn--primary btn--wide" type="submit">
-                      <span class="btn__glow" aria-hidden="true"></span>
-                      Create Player
-                    </button>
-                  </form>
-                </section>
-
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Members List</h2>
-                    <p class="muted">Sorted by <b>Name (ASC)</b></p>
-                  </div>
-
-                  <div class="tableTools">
-                    <div class="inputGroup">
-                      <span class="inputIcon" aria-hidden="true">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                          <path d="M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm11 3-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                      </span>
-                      <input id="memberSearchInput" class="input input--withIcon" type="text" placeholder="Search by name / code / phone..." />
-                    </div>
-
-                    <button id="exportMembersBtn" class="btn btn--ghost" type="button" title="Export full DB JSON (Backup)">
-                      Export Backup JSON
-                    </button>
-                  </div>
-
-                  <div class="tableWrap" role="region" aria-label="Players table" tabindex="0">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Code</th>
-                          <th>Group</th>
-                          <th>Expiry Date</th>
-                          <th>Status</th>
-                          <th class="thActions">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody id="playersTbody">
-                        <!-- rows -->
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div id="playersEmpty" class="emptyState hidden">
-                    No players found.
-                  </div>
-                </section>
-              </div>
-            </section>
-
-            <!-- Financials -->
-            <section id="adminPageFinancials" class="page" aria-label="Financials">
-              <div class="grid grid--cards">
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Revenue (This Month)</div>
-                    <div class="badge badge--neon">Auto</div>
-                  </div>
-                  <div id="finRevenue" class="statCard__value">EGP 0</div>
-                  <div class="statCard__hint">Sum of payments in current month</div>
-                </article>
-
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Expenses (This Month)</div>
-                    <div class="badge badge--gold">Manual</div>
-                  </div>
-                  <div id="finExpenses" class="statCard__value">EGP 0</div>
-                  <div class="statCard__hint">Sum of expenses in current month</div>
-                </article>
-
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Net Profit (This Month)</div>
-                    <div id="finProfitBadge" class="badge badge--success">Profit</div>
-                  </div>
-                  <div id="finProfit" class="statCard__value">EGP 0</div>
-                  <div id="finProfitHint" class="statCard__hint">Revenue - Expenses</div>
-                </article>
-
-                <article class="card statCard">
-                  <div class="statCard__top">
-                    <div class="statCard__label">Total Members</div>
-                    <div class="badge badge--muted">All</div>
-                  </div>
-                  <div id="finMembers" class="statCard__value">0</div>
-                  <div class="statCard__hint">Active + Expired</div>
-                </article>
-              </div>
-
-              <div class="grid grid--two">
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Add Monthly Expense</h2>
-                    <p class="muted">Track rent, utilities, salaries, equipment, etc.</p>
-                  </div>
-
-                  <form id="expenseForm" class="form form--dense">
-                    <div class="formGrid">
-                      <div class="formRow">
-                        <label class="label" for="expenseAmountInput">Amount (EGP)</label>
-                        <input id="expenseAmountInput" class="input" type="number" min="0" step="1" placeholder="0" required />
-                      </div>
-
-                      <div class="formRow">
-                        <label class="label" for="expenseDateInput">Date</label>
-                        <input id="expenseDateInput" class="input" type="date" required />
-                      </div>
-
-                      <div class="formRow formRow--span2">
-                        <label class="label" for="expenseNoteInput">Note</label>
-                        <input id="expenseNoteInput" class="input" type="text" placeholder="e.g., Rent / Equipment / Staff salary..." required />
-                      </div>
-                    </div>
-
-                    <button class="btn btn--primary btn--wide" type="submit">
-                      <span class="btn__glow" aria-hidden="true"></span>
-                      Add Expense
-                    </button>
-                  </form>
-                </section>
-
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Expenses (This Month)</h2>
-                    <p class="muted">Manage entries</p>
-                  </div>
-
-                  <div class="tableWrap" role="region" aria-label="Expenses table" tabindex="0">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Note</th>
-                          <th>Amount</th>
-                          <th class="thActions">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody id="expensesTbody"></tbody>
-                    </table>
-                  </div>
-
-                  <div id="expensesEmpty" class="emptyState hidden">
-                    No expenses for this month yet.
-                  </div>
-                </section>
-              </div>
-            </section>
-
-            <!-- Settings -->
-            <section id="adminPageSettings" class="page" aria-label="Settings">
-              <div class="grid grid--two">
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Backup & Restore</h2>
-                    <p class="muted">Export / Import your localStorage database as JSON</p>
-                  </div>
-
-                  <div class="stack">
-                    <button id="exportDbBtn" class="btn btn--primary btn--wide" type="button">
-                      <span class="btn__glow" aria-hidden="true"></span>
-                      Export Backup JSON
-                    </button>
-
-                    <div class="divider"></div>
-
-                    <div class="formRow">
-                      <label class="label" for="importDbFile">Import Backup JSON</label>
-                      <input id="importDbFile" class="input" type="file" accept="application/json,.json" />
-                      <p class="hint">Import will overwrite current data.</p>
-                    </div>
-
-                    <button id="importDbBtn" class="btn btn--ghost btn--wide" type="button">
-                      Import JSON
-                    </button>
-                  </div>
-                </section>
-
-                <section class="card card--padded">
-                  <div class="card__header">
-                    <h2 class="h2">Groups / Classes</h2>
-                    <p class="muted">Assign players to training groups</p>
-                  </div>
-
-                  <div class="stack">
-                    <div class="inputGroup">
-                      <input id="newGroupInput" class="input" type="text" placeholder="e.g., Morning A" />
-                      <button id="addGroupBtn" class="btn btn--ghost" type="button">Add</button>
-                    </div>
-
-                    <ul id="groupsList" class="list"></ul>
-                    <p class="hint">You can delete empty groups. If a group is used, reassign members first.</p>
-                  </div>
-                </section>
-              </div>
-
-              <section class="card card--padded dangerZone">
-                <div class="card__header">
-                  <h2 class="h2">Danger Zone</h2>
-                  <p class="muted">Reset the local database (cannot be undone)</p>
-                </div>
-
-                <button id="resetDbBtn" class="btn btn--danger" type="button">
-                  Reset All Data
-                </button>
-              </section>
-            </section>
-          </main>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== PLAYER VIEW ===================== -->
-    <section id="viewPlayer" class="view" aria-label="Player portal">
-      <div class="playerLayout">
-        <header class="topbar topbar--player">
-          <div class="topbar__left">
-            <div class="brandInline">
-              <div class="brandMark brandMark--small" aria-hidden="true">
-                <span class="brandMark__dot"></span>
-                <span class="brandMark__line"></span>
-              </div>
-              <div>
-                <div class="topbar__title">Player Portal</div>
-                <div class="topbar__subtitle">Your subscription & attendance</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="topbar__right">
-            <div class="chip chip--outline">
-              <span class="chip__dot chip__dot--gold" aria-hidden="true"></span>
-              <span id="playerNow"></span>
-            </div>
-            <button id="playerLogoutBtn" class="btn btn--ghost" type="button">Logout</button>
-          </div>
-        </header>
-
-        <main class="content content--player">
-          <div class="grid grid--two">
-            <section class="card card--padded">
-              <div class="card__header">
-                <h2 class="h2">Welcome</h2>
-                <p class="muted">Personal dashboard</p>
-              </div>
-
-              <div class="playerHeader">
-                <div class="avatar" aria-hidden="true">
-                  <span id="playerAvatarLetter">P</span>
-                </div>
-                <div>
-                  <div class="playerName" id="playerGreetingName">Player</div>
-                  <div class="playerMeta">
-                    <span class="chip chip--outline">
-                      <span class="chip__dot chip__dot--neon" aria-hidden="true"></span>
-                      Code: <span id="playerCodeText">000000</span>
-                    </span>
-                    <span class="chip chip--outline">
-                      Group: <span id="playerGroupText">—</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="statusCard">
-                <div class="statusCard__row">
-                  <div>
-                    <div class="statusCard__label">Subscription Valid Until</div>
-                    <div id="playerValidUntil" class="statusCard__value">—</div>
-                  </div>
-                  <div id="playerStatusBadge" class="badge badge--success">Active</div>
-                </div>
-                <div class="statusCard__divider"></div>
-                <div class="statusCard__row statusCard__row--compact">
-                  <div class="muted">Subscription Type</div>
-                  <div id="playerSubType" class="mono">—</div>
-                </div>
-              </div>
-            </section>
-
-            <section class="card card--padded">
-              <div class="card__header">
-                <h2 class="h2">Attendance</h2>
-                <p class="muted">Tap check-in once per day</p>
-              </div>
-
-              <div class="stack">
-                <button id="checkInBtn" class="btn btn--primary btn--wide" type="button">
-                  <span class="btn__glow" aria-hidden="true"></span>
-                  Check-in Today
-                </button>
-
-                <div class="divider"></div>
-
-                <div class="sectionTitleRow">
-                  <div class="sectionTitle">Recent Check-ins</div>
-                  <div id="attendanceCount" class="chip chip--outline">0</div>
-                </div>
-
-                <ul id="attendanceList" class="list list--compact"></ul>
-
-                <div id="attendanceEmpty" class="emptyState hidden">
-                  No attendance records yet.
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <section class="card card--padded">
-            <div class="card__header">
-              <h2 class="h2">Payment History</h2>
-              <p class="muted">Your last payments / renewals</p>
-            </div>
-
-            <div class="tableWrap" role="region" aria-label="Payment history table" tabindex="0">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody id="paymentTbody"></tbody>
-              </table>
-            </div>
-
-            <div id="paymentsEmpty" class="emptyState hidden">
-              No payments found.
-            </div>
-          </section>
-        </main>
-      </div>
-    </section>
-
-    <!-- ===================== MODAL ===================== -->
-    <div id="modalOverlay" class="modalOverlay hidden" role="dialog" aria-modal="true" aria-label="Modal">
-      <div class="modal">
-        <div class="modal__header">
-          <div>
-            <div id="modalTitle" class="modal__title">Modal</div>
-            <div id="modalSubtitle" class="modal__subtitle muted"></div>
-          </div>
-          <button id="modalCloseBtn" class="iconBtn iconBtn--ghost" type="button" aria-label="Close modal">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-        </div>
-
-        <div id="modalBody" class="modal__body"></div>
-
-        <div class="modal__footer">
-          <button id="modalSecondaryBtn" class="btn btn--ghost" type="button">Cancel</button>
-          <button id="modalPrimaryBtn" class="btn btn--primary" type="button">
-            <span class="btn__glow" aria-hidden="true"></span>
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sidebar overlay for mobile -->
-    <div id="backdrop" class="backdrop hidden" aria-hidden="true"></div>
-
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+/* style.css */
+:root{
+  --bg: #1a1a1a;
+  --panel: #131313;
+  --panel2: #101010;
+  --card: #171717;
+  --card2: #1c1c1c;
+  --text: #e8e8e8;
+  --muted: #a5a5a5;
+  --muted2: #7f7f7f;
+
+  --neon: #00bcd4;
+  --gold: #ffd700;
+
+  --success: #21c55d;
+  --danger: #ff4d4f;
+
+  --border: rgba(255,255,255,0.08);
+  --shadow: 0 12px 40px rgba(0,0,0,0.45);
+  --shadow2: 0 18px 60px rgba(0,0,0,0.65);
+
+  --radius: 16px;
+  --radius2: 22px;
+
+  --font: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+body{
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background: radial-gradient(1000px 600px at 20% -20%, rgba(0,188,212,0.18), transparent 55%),
+              radial-gradient(900px 600px at 120% 20%, rgba(255,215,0,0.12), transparent 60%),
+              linear-gradient(180deg, #0d0d0d, var(--bg));
+  line-height: 1.6;
+}
+
+.hidden{ display:none !important; }
+a{ color: inherit; }
+:focus-visible{ outline: 2px solid rgba(0,188,212,0.65); outline-offset: 2px; }
+
+/* ---------- Core ---------- */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.card--padded{ padding: 18px; }
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:0.35;
+  background: radial-gradient(600px 220px at 10% 0%, rgba(0,188,212,0.18), transparent 60%),
+              radial-gradient(600px 220px at 90% 0%, rgba(255,215,0,0.12), transparent 60%);
+}
+.card > *{ position: relative; }
+
+.h2{
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+.muted{
+  color: var(--muted);
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+.label{
+  display:block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.hint{
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted2);
+}
+
+.mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.divider{ height:1px; background: var(--border); }
+
+.stack{ display:grid; gap: 12px; }
+
+.form{ display:grid; gap: 14px; }
+.form--dense{ gap: 12px; }
+.formRow{ display:grid; }
+.formRow--span2{ grid-column: span 2; }
+
+.formGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 780px){
+  .formGrid{ grid-template-columns: 1fr; }
+  .formRow--span2{ grid-column: auto; }
+}
+
+.input, .select, .textarea{
+  width: 100%;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 11px 12px;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+.textarea{ resize: vertical; min-height: 120px; }
+
+.input:focus, .select:focus, .textarea:focus{
+  border-color: rgba(0,188,212,0.5);
+  box-shadow: 0 0 0 4px rgba(0,188,212,0.12);
+}
+
+.select{ padding-inline-end: 34px; }
+
+.inputGroup{
+  display:flex;
+  align-items: stretch;
+  gap: 10px;
+}
+.inputGroup .input{ flex:1; }
+
+.inputIcon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--muted);
+}
+.input--withIcon{ padding-inline-start: 12px; }
+
+.btn{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.28);
+  color: var(--text);
+  padding: 11px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  position: relative;
+  overflow: hidden;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.20); }
+.btn:active{ transform: translateY(0px); }
+.btn--wide{ width: 100%; }
+
+.btn__glow{
+  position:absolute;
+  inset:-40px;
+  background: radial-gradient(180px 70px at 30% 30%, rgba(0,188,212,0.18), transparent 60%),
+              radial-gradient(180px 70px at 70% 30%, rgba(255,215,0,0.12), transparent 60%);
+  opacity:0;
+  transition: opacity 180ms ease;
+  pointer-events:none;
+}
+
+.btn--primary{
+  border-color: rgba(0,188,212,0.45);
+  background: linear-gradient(180deg, rgba(0,188,212,0.22), rgba(0,0,0,0.25));
+}
+.btn--primary:hover{
+  border-color: rgba(0,188,212,0.70);
+  box-shadow: 0 10px 30px rgba(0,188,212,0.10);
+}
+.btn--primary:hover .btn__glow{ opacity: 1; }
+
+.btn--ghost{ background: rgba(0,0,0,0.18); }
+
+.btn--danger{
+  border-color: rgba(255,77,79,0.55);
+  background: linear-gradient(180deg, rgba(255,77,79,0.20), rgba(0,0,0,0.24));
+}
+.btn--danger:hover{
+  border-color: rgba(255,77,79,0.8);
+  box-shadow: 0 10px 30px rgba(255,77,79,0.10);
+}
+
+.iconBtn{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.24);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition: transform 120ms ease, border-color 150ms ease;
+}
+.iconBtn--ghost{ background: rgba(0,0,0,0.18); }
+.iconBtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.20); }
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.24);
+  color: var(--text);
+  white-space: nowrap;
+}
+.badge--success{ border-color: rgba(33,197,93,0.45); background: rgba(33,197,93,0.12); }
+.badge--danger{ border-color: rgba(255,77,79,0.55); background: rgba(255,77,79,0.10); }
+.badge--neon{ border-color: rgba(0,188,212,0.55); background: rgba(0,188,212,0.10); }
+.badge--gold{ border-color: rgba(255,215,0,0.45); background: rgba(255,215,0,0.08); }
+.badge--muted{ border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.04); color: var(--muted); }
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius: 999px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.10);
+  font-size: 12px;
+  color: var(--muted);
+}
+.chip--outline{ background: rgba(0,0,0,0.14); }
+
+.chip__dot{
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.35);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
+}
+.chip__dot--neon{ background: var(--neon); box-shadow: 0 0 0 3px rgba(0,188,212,0.14); }
+.chip__dot--gold{ background: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.12); }
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+}
+.pill--neon{ border-color: rgba(0,188,212,0.40); }
+.pill__dot{
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  background: var(--neon);
+  box-shadow: 0 0 0 4px rgba(0,188,212,0.10);
+}
+
+.alert{
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.22);
+  font-size: 13px;
+}
+.alert--danger{
+  border-color: rgba(255,77,79,0.55);
+  background: rgba(255,77,79,0.12);
+}
+
+/* ---------- Views ---------- */
+.view{ display:none; min-height: 100vh; }
+.view--active{ display:block; }
+
+/* ---------- Brand ---------- */
+.brandMark{
+  width:52px; height:52px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,188,212,0.35);
+  background: linear-gradient(180deg, rgba(0,188,212,0.18), rgba(0,0,0,0.24));
+  position: relative;
+  display:grid;
+  place-items:center;
+  box-shadow: 0 12px 40px rgba(0,188,212,0.08);
+}
+.brandMark--small{ width:42px; height:42px; border-radius: 14px; }
+
+.brandMark__dot{
+  width: 12px; height: 12px;
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 0 6px rgba(255,215,0,0.10);
+  position:absolute;
+  inset-inline-start: 14px;
+  top: 14px;
+}
+.brandMark__line{
+  width: 18px; height: 2px;
+  background: var(--neon);
+  border-radius: 999px;
+  position:absolute;
+  inset-inline-end: 12px;
+  bottom: 16px;
+  box-shadow: 0 0 20px rgba(0,188,212,0.22);
+}
+
+/* ---------- Login ---------- */
+.login{
+  min-height: 100vh;
+  display:grid;
+  place-items:center;
+  padding: 24px;
+  gap: 18px;
+}
+.login__brand{ display:flex; align-items:center; gap: 14px; }
+.login__brandText h1{ margin:0; font-size: 22px; font-weight: 900; }
+.login__brandText p{ margin:2px 0 0; color: var(--muted); font-size: 13px; }
+
+.loginCard{ width: min(560px, 100%); padding: 16px; }
+
+.tabs{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  overflow:hidden;
+}
+.tab{
+  padding: 12px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor:pointer;
+  font-weight: 900;
+}
+.tab--active{
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(0,188,212,0.18), rgba(0,0,0,0.18));
+  box-shadow: inset 0 0 0 1px rgba(0,188,212,0.35);
+}
+.tabPanels{ margin-top: 14px; }
+.tabPanel{ display:none; }
+.tabPanel--active{ display:block; }
+
+.loginFooter{
+  margin-top: 14px;
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---------- Admin Layout (RTL sidebar on right) ---------- */
+.layout{
+  display:grid;
+  grid-template-columns: 1fr 280px; /* main then sidebar */
+  min-height: 100vh;
+}
+.sidebar{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border-inline-start: 1px solid var(--border);
+  padding: 16px;
+  display:grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 14px;
+  z-index: 20;
+}
+.sidebar__top{
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sidebar__brand{ display:flex; align-items:center; gap: 12px; }
+.sidebar__title{ font-weight: 900; }
+.sidebar__subtitle{ color: var(--muted); font-size: 12px; margin-top: 2px; }
+.sidebar__close{ display:none; }
+
+.nav{ display:grid; gap: 8px; align-content: start; }
+.nav__item{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.14);
+  color: var(--muted);
+  cursor:pointer;
+  font-weight: 900;
+  text-align: start;
+  transition: transform 120ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+.nav__item:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.16); color: var(--text); }
+.nav__item--active{
+  color: var(--text);
+  border-color: rgba(0,188,212,0.45);
+  background: linear-gradient(180deg, rgba(0,188,212,0.12), rgba(0,0,0,0.10));
+  box-shadow: 0 18px 50px rgba(0,188,212,0.08);
+}
+.nav__icon{ display:inline-flex; align-items:center; justify-content:center; }
+
+.sidebar__bottom{ display:grid; gap: 12px; }
+.sidebar__meta{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+.main{
+  min-width:0;
+  display:grid;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar{
+  position: sticky;
+  top:0;
+  z-index:10;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,10,10,0.65);
+  backdrop-filter: blur(12px);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.topbar__left{ display:flex; align-items:center; gap: 14px; min-width:0; }
+.topbar__title{ font-weight: 900; font-size: 16px; }
+.topbar__subtitle{ color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+.content{ padding: 18px; display:grid; gap: 18px; }
+.page{ display:none; }
+.page--active{ display:block; }
+
+.grid{ display:grid; gap: 16px; }
+.grid--cards{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+.grid--two{ grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 1100px){
+  .grid--cards{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 780px){
+  .grid--two{ grid-template-columns: 1fr; }
+}
+
+.statCard{ padding: 16px; }
+.statCard__top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; }
+.statCard__label{ color: var(--muted); font-size: 12px; font-weight: 800; }
+.statCard__value{ margin-top: 10px; font-size: 28px; font-weight: 900; }
+.statCard__hint{ margin-top: 8px; color: var(--muted2); font-size: 12px; }
+
+.tableTools{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tableWrap{
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  border-radius: 14px;
+  overflow:auto;
+  max-height: 520px;
+}
+
+.table{
+  width:100%;
+  border-collapse: collapse;
+  min-width: 740px;
+}
+
+.table thead th{
+  text-align: start;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 900;
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.20);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table tbody td{
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  vertical-align: middle;
+  font-size: 13px;
+}
+
+.table tbody tr:hover{ background: rgba(255,255,255,0.03); }
+.thActions{ width: 260px; }
+
+.rowActions{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+.emptyState{
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px dashed rgba(255,255,255,0.14);
+  color: var(--muted);
+  background: rgba(0,0,0,0.14);
+  text-align:center;
+}
+
+.sectionTitleRow{ display:flex; align-items:center; justify-content: space-between; }
+.sectionTitle{ font-weight: 900; font-size: 13px; }
+
+.list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  gap: 10px;
+}
+.listItem{
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.listItem__left{ display:grid; gap: 2px; }
+.listItem__title{ font-weight: 900; font-size: 13px; }
+.listItem__meta{ color: var(--muted2); font-size: 12px; }
+.list--compact{ gap: 8px; }
+.list--compact .listItem{ padding: 10px 12px; }
+
+/* ---------- Charts ---------- */
+.barChart{ display:grid; gap: 12px; margin-top: 14px; }
+.barRow{
+  display:grid;
+  grid-template-columns: 80px 1fr 120px;
+  gap: 10px;
+  align-items:center;
+}
+.barRow__label{ color: var(--muted); font-weight: 900; font-size: 12px; }
+.barRow__value{ text-align: end; font-weight: 900; font-size: 12px; }
+
+.barTrack{
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+  overflow:hidden;
+}
+.barFill{
+  height: 100%;
+  border-radius: 999px;
+  width: 0%;
+  transition: width 250ms ease;
+}
+.barFill--neon{ background: linear-gradient(90deg, rgba(0,188,212,0.9), rgba(0,188,212,0.25)); }
+.barFill--gold{ background: linear-gradient(90deg, rgba(255,215,0,0.85), rgba(255,215,0,0.20)); }
+.barFill--success{ background: linear-gradient(90deg, rgba(33,197,93,0.85), rgba(33,197,93,0.20)); }
+
+.groupsOverview{ display:grid; gap: 10px; margin-top: 14px; }
+.groupBar{ display:grid; gap: 8px; }
+.groupBar__top{ display:flex; align-items:center; justify-content: space-between; gap: 10px; }
+.groupBar__name{ font-weight: 900; font-size: 13px; }
+.groupBar__count{ color: var(--muted); font-size: 12px; }
+.groupBar__track{
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+  overflow:hidden;
+}
+.groupBar__fill{
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(0,188,212,0.70), rgba(255,215,0,0.22));
+  transition: width 250ms ease;
+}
+
+/* ---------- Player Layout ---------- */
+.playerLayout{
+  min-height: 100vh;
+  display:grid;
+  grid-template-rows: auto 1fr;
+}
+.topbar--player{ padding-inline: 18px; }
+.brandInline{ display:flex; align-items:center; gap: 12px; }
+.content--player{ max-width: 1100px; width:100%; margin: 0 auto; }
+
+.playerHeader{ display:flex; align-items:center; gap: 14px; }
+.avatar{
+  width: 56px; height: 56px;
+  border-radius: 18px;
+  border: 1px solid rgba(0,188,212,0.35);
+  background: linear-gradient(180deg, rgba(0,188,212,0.16), rgba(0,0,0,0.22));
+  display:grid; place-items:center;
+  font-weight: 900;
+}
+.playerName{ font-size: 18px; font-weight: 900; }
+.playerMeta{ margin-top: 6px; display:flex; gap: 10px; flex-wrap: wrap; }
+
+.statusCard{
+  margin-top: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.20);
+  padding: 14px;
+}
+.statusCard__row{ display:flex; align-items:center; justify-content: space-between; gap: 12px; }
+.statusCard__row--compact{ font-size: 13px; }
+.statusCard__label{ font-size: 12px; color: var(--muted); font-weight: 900; }
+.statusCard__value{ margin-top: 6px; font-weight: 900; font-size: 18px; }
+.statusCard__divider{ height:1px; background: rgba(255,255,255,0.08); margin: 12px 0; }
+
+.noteBox{
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  border-radius: 14px;
+  padding: 14px;
+  color: var(--text);
+  white-space: pre-wrap;
+  min-height: 110px;
+}
+
+/* ---------- Modal ---------- */
+.modalOverlay{
+  position: fixed;
+  inset:0;
+  background: rgba(0,0,0,0.62);
+  display:grid;
+  place-items:center;
+  padding: 18px;
+  z-index: 60;
+}
+.modal{
+  width: min(760px, 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.30));
+  box-shadow: var(--shadow2);
+  overflow:hidden;
+}
+.modal__header{
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.modal__title{ font-weight: 900; font-size: 16px; }
+.modal__subtitle{ margin: 6px 0 0; font-size: 12px; }
+.modal__body{ padding: 14px; }
+.modal__footer{
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  display:flex;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Toasts ---------- */
+.toasts{
+  position: fixed;
+  inset-inline-end: 14px;
+  top: 14px;
+  display:grid;
+  gap: 10px;
+  z-index: 80;
+}
+.toast{
+  width: min(360px, calc(100vw - 28px));
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  padding: 12px 12px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+  display:flex;
+  gap: 10px;
+  align-items:flex-start;
+}
+.toast__dot{
+  width: 10px; height: 10px;
+  border-radius: 999px;
+  margin-top: 4px;
+  background: rgba(255,255,255,0.35);
+  box-shadow: 0 0 0 5px rgba(255,255,255,0.06);
+}
+.toast__dot--success{ background: var(--success); box-shadow: 0 0 0 5px rgba(33,197,93,0.12); }
+.toast__dot--danger{ background: var(--danger); box-shadow: 0 0 0 5px rgba(255,77,79,0.12); }
+.toast__dot--info{ background: var(--neon); box-shadow: 0 0 0 5px rgba(0,188,212,0.12); }
+.toast__dot--warn{ background: var(--gold); box-shadow: 0 0 0 5px rgba(255,215,0,0.12); }
+.toast__title{ font-weight: 900; font-size: 13px; margin:0; }
+.toast__msg{ margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+
+/* ---------- Mobile Sidebar ---------- */
+.backdrop{
+  position: fixed;
+  inset:0;
+  background: rgba(0,0,0,0.50);
+  z-index: 19;
+}
+
+@media (max-width: 980px){
+  .layout{ grid-template-columns: 1fr; }
+
+  .sidebar{
+    position: fixed;
+    inset-inline-end: 0;
+    top: 0;
+    height: 100vh;
+    width: 320px;
+    transform: translateX(110%); /* slide from right */
+    transition: transform 220ms ease;
+    z-index: 30;
+    border-inline-start: 1px solid var(--border);
+  }
+  .sidebar.sidebar--open{ transform: translateX(0%); }
+  .sidebar__close{ display:inline-flex; }
+
+  .topbar{ padding: 14px; }
+  .content{ padding: 14px; }
+}
+
+/* ---------- Danger Zone ---------- */
+.dangerZone{ border-color: rgba(255,77,79,0.24); }
