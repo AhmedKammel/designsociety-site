@@ -1,6 +1,212 @@
 {
   "updatedAt": "2026-02-07T00:00:00.000Z",
-  "groups": [],
-  "members": [],
-  "expenses": []
+  "groups": [
+    {
+      "id": "G-KB-KB12",
+      "sport": "كيك بوكس",
+      "name": "كبار",
+      "minAge": 10,
+      "maxAge": 12,
+      "note": "مجموعة الكيك بوكس (كبار) 10-12",
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "G-GYM-GIRLS",
+      "sport": "جمباز",
+      "name": "بنات",
+      "minAge": 7,
+      "maxAge": 10,
+      "note": "مجموعة الجمباز للبنات 7-10",
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "G-FIT-BEGIN",
+      "sport": "لياقة",
+      "name": "مبتدئين",
+      "minAge": 13,
+      "maxAge": 18,
+      "note": "لياقة بدنية (مبتدئين) 13-18",
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    }
+  ],
+  "members": [
+    {
+      "id": "M-001",
+      "name": "أحمد سامي",
+      "email": "ahmed.sami@test.com",
+      "age": 11,
+      "groupId": "G-KB-KB12",
+      "renewalDate": "2026-02-20",
+      "debt": 0,
+      "status": "نشط",
+      "note": "ملتزم في التمرين.",
+      "auth": {
+        "salt": "14226dd9181f2a276ece06307f5f576b",
+        "hash": "5aeaeb312ff210cadf8fe0dba6b3c7e051e131ab7770905e79fd4d951807eebd"
+      },
+      "payments": [
+        {
+          "date": "2026-01-20",
+          "amount": 250
+        },
+        {
+          "date": "2026-02-01",
+          "amount": 250
+        }
+      ],
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "M-002",
+      "name": "علي محمود",
+      "email": "ali.mahmoud@test.com",
+      "age": 12,
+      "groupId": "G-KB-KB12",
+      "renewalDate": "2026-02-10",
+      "debt": 100,
+      "status": "تنبيه",
+      "note": "متأخر في التجديد أسبوع.",
+      "auth": {
+        "salt": "95f7d7888632843b7b7b5880cf8581d9",
+        "hash": "756d37d9e5e57e1a1a8fbe0de6144f9f9a6adfae828961630dbe2678bfb78779"
+      },
+      "payments": [
+        {
+          "date": "2026-01-10",
+          "amount": 200
+        }
+      ],
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "M-003",
+      "name": "مريم حسن",
+      "email": "mariam.hassan@test.com",
+      "age": 9,
+      "groupId": "G-GYM-GIRLS",
+      "renewalDate": "2026-03-05",
+      "debt": 0,
+      "status": "نشط",
+      "note": "مستوى جيد جدًا.",
+      "auth": {
+        "salt": "d75e4af2586fcf14acbc230239bd6395",
+        "hash": "0bf947864a525e8b9255678d5d81c6005bef253cf2b450ae72bc546e2a9d10c8"
+      },
+      "payments": [
+        {
+          "date": "2026-02-05",
+          "amount": 300
+        }
+      ],
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "M-004",
+      "name": "سارة عماد",
+      "email": "sara.emad@test.com",
+      "age": 8,
+      "groupId": "G-GYM-GIRLS",
+      "renewalDate": "2026-02-28",
+      "debt": 50,
+      "status": "متابعة",
+      "note": "تحتاج متابعة المرونة.",
+      "auth": {
+        "salt": "468533e5c53cd25eff19fca93b9adbd9",
+        "hash": "a2393244b84fbc154153ba72da31600927a49c5695ac4c05aa7fce5a99ede959"
+      },
+      "payments": [
+        {
+          "date": "2026-01-28",
+          "amount": 250
+        },
+        {
+          "date": "2026-02-15",
+          "amount": 150
+        }
+      ],
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "M-005",
+      "name": "يوسف خالد",
+      "email": "youssef.khaled@test.com",
+      "age": 15,
+      "groupId": "G-FIT-BEGIN",
+      "renewalDate": "2026-02-07",
+      "debt": 0,
+      "status": "نشط",
+      "note": "بدأ حديثًا ومتحمس.",
+      "auth": {
+        "salt": "2d9dc01339e43991b07db9c1312e4015",
+        "hash": "751241a28ae14188198ba7d1277e1f082f2b5e5b102b53ec458cea38a16c1c18"
+      },
+      "payments": [
+        {
+          "date": "2026-02-07",
+          "amount": 400
+        }
+      ],
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "M-006",
+      "name": "نور أحمد",
+      "email": "noor.ahmed@test.com",
+      "age": 17,
+      "groupId": "G-FIT-BEGIN",
+      "renewalDate": "2026-03-01",
+      "debt": 200,
+      "status": "إيقاف مؤقت",
+      "note": "موقوف لحين سداد المديونية.",
+      "auth": {
+        "salt": "c4bf1c616be9c1db0ba7c8e23598a20b",
+        "hash": "0c279ed41e384d837cec38ce86bb25464c73f7079cf1d132107a2d4655f37d3d"
+      },
+      "payments": [
+        {
+          "date": "2026-01-05",
+          "amount": 200
+        }
+      ],
+      "createdAt": "2026-02-07T00:00:00.000Z",
+      "updatedAt": "2026-02-07T00:00:00.000Z"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "E-001",
+      "category": "إيجار",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "title": "إيجار القاعة",
+      "note": "إيجار شهر فبراير",
+      "createdAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "E-002",
+      "category": "مرتبات",
+      "amount": 1500,
+      "date": "2026-02-03",
+      "title": "مرتب المدرب",
+      "note": "دفعة أسبوعية",
+      "createdAt": "2026-02-07T00:00:00.000Z"
+    },
+    {
+      "id": "E-003",
+      "category": "معدات",
+      "amount": 650,
+      "date": "2026-01-25",
+      "title": "قفازات ومستلزمات",
+      "note": "كيك بوكس",
+      "createdAt": "2026-02-07T00:00:00.000Z"
+    }
+  ]
 }
