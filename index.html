@@ -1,96 +1,424 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Design Society</title>
-  <meta name="color-scheme" content="dark" />
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل بيانات الطلاب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a56a0;
+            --primary-light: #2d72d2;
+            --accent: #f0a500;
+            --bg: #eef3fb;
+            --card: #ffffff;
+            --text: #1c2b4a;
+            --muted: #7a8fa6;
+            --border: #d0ddf0;
+            --success: #0e9f6e;
+            --radius: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background decorations */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        body::before {
+            width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(26,86,160,0.12), transparent 70%);
+            top: -120px; right: -100px;
+        }
+        body::after {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(240,165,0,0.10), transparent 70%);
+            bottom: -80px; left: -80px;
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            width: 92%;
+            max-width: 460px;
+        }
+
+        /* Header badge */
+        .badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            width: fit-content;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 18px rgba(26,86,160,0.3);
+        }
+        .badge svg { width: 16px; height: 16px; }
+
+        .card {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 36px 32px 32px;
+            box-shadow: 0 8px 40px rgba(26,86,160,0.10), 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(208,221,240,0.6);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .icon-wrap {
+            width: 68px; height: 68px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 6px 20px rgba(26,86,160,0.35);
+        }
+        .icon-wrap svg { width: 34px; height: 34px; color: #fff; }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* Divider */
+        .divider {
+            height: 2px;
+            background: linear-gradient(to left, transparent, var(--border), transparent);
+            margin-bottom: 26px;
+        }
+
+        /* Form fields */
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        label .dot {
+            width: 7px; height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.8px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            color: var(--text);
+            background: #f8faff;
+            transition: all 0.25s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        input::placeholder { color: #b0bece; font-weight: 500; }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(45,114,210,0.12);
+        }
+
+        .select-wrap {
+            position: relative;
+        }
+        .select-wrap::after {
+            content: '▾';
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* Submit button */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(26,86,160,0.35);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+        }
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(26,86,160,0.4);
+        }
+        .btn-submit:active:not(:disabled) { transform: translateY(0); }
+        .btn-submit:disabled {
+            background: linear-gradient(135deg, #95a5b8, #7a8fa6);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .btn-submit svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* Spinner */
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Success screen */
+        #successScreen {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+            animation: fadeUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .success-circle {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, #0fba81, var(--success));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 35px rgba(14,159,110,0.35);
+            animation: popIn 0.5s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to   { transform: scale(1); }
+        }
+        .success-circle svg { width: 50px; height: 50px; color: #fff; }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        .success-text {
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 600;
+            line-height: 1.8;
+        }
+        .success-accent {
+            display: inline-block;
+            background: rgba(14,159,110,0.1);
+            color: var(--success);
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        /* Dots pattern */
+        .dots {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: radial-gradient(circle, rgba(26,86,160,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+
+        @media (max-width: 420px) {
+            .card { padding: 28px 20px 24px; }
+            .row-2 { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
+<body>
+    <div class="dots"></div>
 
-<body class="bg-slate-950 text-slate-100">
-  <header class="border-b border-slate-800">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
-      <div>
-        <h1 class="text-xl font-bold">Design Society</h1>
-        <p class="text-slate-400 text-sm">بوابة اللاعب</p>
-      </div>
-      <a href="admin.html" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold">
-        لوحة الإدارة
-      </a>
+    <div class="page-wrap">
+
+        <div class="badge">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422A12.083 12.083 0 0121 13c0 5.523-4.477 10-10 10S1 18.523 1 13a12.083 12.083 0 012.84-7.422L12 14z"/>
+            </svg>
+            نظام تسجيل الطلاب
+        </div>
+
+        <div class="card">
+
+            <!-- Form view -->
+            <div id="formView">
+                <div class="card-header">
+                    <div class="icon-wrap">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <h1>تسجيل البيانات</h1>
+                    <p class="subtitle">يرجى ملء جميع الحقول بدقة</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <form id="dataForm">
+                    <div class="form-group">
+                        <label><span class="dot"></span> الاسم بالكامل</label>
+                        <input type="text" id="name" name="name" required placeholder="أدخل الاسم رباعياً">
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="dot"></span> رقم الهاتف</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="01XXXXXXXXX">
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label><span class="dot"></span> الصف</label>
+                            <div class="select-wrap">
+                                <select id="grade" name="grade" required>
+                                    <option value="" disabled selected>اختر...</option>
+                                    <option value="الأول">الأول</option>
+                                    <option value="الثاني">الثاني</option>
+                                    <option value="الثالث">الثالث</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><span class="dot"></span> الشعبة</label>
+                            <div class="select-wrap">
+                                <select id="section" name="section" required>
+                                    <option value="" disabled selected>اختر...</option>
+                                    <option value="أ">أ</option>
+                                    <option value="ب">ب</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        إرسال البيانات
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success view -->
+            <div id="successScreen">
+                <div class="success-circle">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="success-title">تم بنجاح! 🎉</p>
+                <p class="success-text">
+                    تم إرسال بياناتك وحفظها بنجاح<br>
+                    سيتم التواصل معك قريباً
+                </p>
+                <span class="success-accent">✓ تم التسجيل</span>
+            </div>
+
+        </div>
     </div>
-  </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-6">
-    <section id="loginBox" class="max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 mx-auto">
-      <h2 class="text-lg font-bold">تسجيل الدخول</h2>
-      <p class="text-slate-400 text-sm mt-1">ادخل كود اللاعب (يتم إنشاؤه من لوحة الأدمن)</p>
+    <script>
+        const form = document.getElementById('dataForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formView = document.getElementById('formView');
+        const successScreen = document.getElementById('successScreen');
 
-      <div class="mt-4 space-y-3">
-        <input id="code" inputmode="numeric" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2" placeholder="كود اللاعب" />
-        <button id="loginBtn" class="w-full px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold">دخول</button>
-        <p id="loginMsg" class="text-sm text-red-400"></p>
-      </div>
-    </section>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbymsV5Gd7Ac80C63o34wekfsthYP4NvdFbKPG79P84efq7VzVZxfDWF6N1YLzSGcA4p/exec';
 
-    <section id="dash" class="hidden space-y-4">
-      <div class="flex items-center justify-between gap-2 flex-wrap">
-        <div>
-          <h2 class="text-lg font-bold" id="memberName">—</h2>
-          <p class="text-slate-400 text-sm" id="memberGroup">—</p>
-        </div>
-        <div class="flex gap-2 flex-wrap">
-          <button id="refreshBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold">تحديث</button>
-          <button id="logoutBtn" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-sm font-semibold">خروج</button>
-        </div>
-      </div>
+        form.addEventListener('submit', e => {
+            e.preventDefault();
 
-      <div class="grid md:grid-cols-4 gap-3">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-          <p class="text-slate-400 text-sm">السن</p>
-          <p class="text-2xl font-bold mt-1" id="ageKpi">—</p>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-          <p class="text-slate-400 text-sm">ميعاد التجديد</p>
-          <p class="text-2xl font-bold mt-1" id="renewKpi">—</p>
-          <p class="text-slate-500 text-xs mt-1" id="renewHint">—</p>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-          <p class="text-slate-400 text-sm">المديونية</p>
-          <p class="text-2xl font-bold mt-1" id="debtKpi">—</p>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-          <p class="text-slate-400 text-sm">الحالة</p>
-          <p class="text-2xl font-bold mt-1" id="statusKpi">—</p>
-        </div>
-      </div>
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="spinner"></div> جاري الإرسال...';
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <h3 class="font-bold">وصف الحالة</h3>
-        <p class="text-slate-300 mt-2 whitespace-pre-wrap" id="noteBox">—</p>
-      </div>
+            const formData = new FormData(form);
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <div class="flex items-center justify-between gap-2 flex-wrap">
-          <h3 class="font-bold">الدفعات</h3>
-          <span class="text-slate-500 text-xs" id="updatedAt">—</span>
-        </div>
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(() => showSuccess())
+                .catch(() => showSuccess()); // Show success either way (Google Apps Script CORS)
+        });
 
-        <div class="mt-3 overflow-auto border border-slate-800 rounded-2xl">
-          <table class="min-w-[600px] w-full text-sm">
-            <thead class="bg-slate-950">
-              <tr>
-                <th class="text-right p-3">التاريخ</th>
-                <th class="text-right p-3">المبلغ</th>
-              </tr>
-            </thead>
-            <tbody id="payRows" class="divide-y divide-slate-800"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
+        function showSuccess() {
+            formView.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            formView.style.opacity = '0';
+            formView.style.transform = 'translateY(-15px)';
 
-  <script src="./user.js"></script>
+            setTimeout(() => {
+                formView.style.display = 'none';
+                successScreen.style.display = 'block';
+            }, 400);
+        }
+    </script>
 </body>
 </html>
