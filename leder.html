@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هرم القيادة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f5d77a;
+    --gold-deep: #9c7c1e;
+    --bg-0: #0a0a0f;
+    --bg-1: #12121c;
+    --ink: #ece8df;
+    --tier-1: linear-gradient(135deg, #f5d77a 0%, #d4af37 45%, #9c7c1e 100%);
+    --tier-2: linear-gradient(135deg, #e8e8ef 0%, #b8bcc9 50%, #8a8e9c 100%);
+    --tier-3: linear-gradient(135deg, #e2a96a 0%, #c17d3e 50%, #8a5526 100%);
+    --tier-4: linear-gradient(135deg, #6f7891 0%, #4a526b 100%);
+    --tier-5: linear-gradient(135deg, #3a3f52 0%, #262a3a 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,175,55,0.12), transparent 60%),
+      radial-gradient(ellipse 100% 100% at 50% 100%, rgba(40,44,70,0.4), transparent 70%),
+      var(--bg-0);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* grain overlay */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 9999;
+  }
+
+  /* floating particles */
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .particle {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 8px var(--gold);
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  header {
+    text-align: center;
+    padding: 60px 20px 30px;
+    position: relative;
+    z-index: 2;
+  }
+
+  header .crown {
+    font-size: 42px;
+    color: var(--gold);
+    filter: drop-shadow(0 0 20px rgba(212,175,55,0.6));
+    animation: glow 3s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes glow {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(212,175,55,0.4)); transform: translateY(0); }
+    50% { filter: drop-shadow(0 0 28px rgba(212,175,55,0.8)); transform: translateY(-6px); }
+  }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 6vw, 3.8rem);
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: var(--tier-1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 14px 0 6px;
+  }
+
+  header p {
+    color: rgba(236,232,223,0.5);
+    letter-spacing: 6px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .divider {
+    width: 120px; height: 2px;
+    margin: 24px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .pyramid {
+    max-width: 920px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tier {
+    position: relative;
+    border-radius: 18px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(40px) scale(0.92);
+    animation: drop 0.8s cubic-bezier(.2,.8,.2,1) forwards;
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1), filter 0.4s;
+    will-change: transform;
+  }
+  @keyframes drop {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .tier:hover {
+    transform: translateY(-8px) scale(1.03);
+    z-index: 5;
+  }
+  .tier:hover .tier-inner { box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 40px var(--shadow-clr); }
+
+  .tier-inner {
+    border-radius: 14px;
+    padding: 26px 34px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: var(--bg-1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+    transition: box-shadow 0.4s;
+  }
+
+  /* shimmer sweep */
+  .tier-inner::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -120%;
+    width: 60%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s;
+  }
+  .tier:hover .tier-inner::before { left: 130%; }
+
+  .rank-badge {
+    flex-shrink: 0;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: #0a0a0f;
+    position: relative;
+  }
+  .rank-badge::after {
+    content: "";
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25);
+  }
+
+  .info { flex: 1; min-width: 0; }
+  .name {
+    font-size: clamp(1.15rem, 3.5vw, 1.7rem);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+  }
+  .title-label {
+    font-size: 0.78rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .level-tag {
+    flex-shrink: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(236,232,223,0.6);
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* tier-specific accents */
+  .t1 { width: 56%; --shadow-clr: rgba(212,175,55,0.4); }
+  .t1 .rank-badge { background: var(--tier-1); }
+  .t1 .title-label { color: var(--gold-light); }
+  .t1 .tier-inner { border: 1px solid rgba(212,175,55,0.35); }
+
+  .t2 { width: 66%; --shadow-clr: rgba(184,188,201,0.3); }
+  .t2 .rank-badge { background: var(--tier-2); }
+  .t2 .title-label { color: #c9cdd8; }
+
+  .t3 { width: 76%; --shadow-clr: rgba(193,125,62,0.3); }
+  .t3 .rank-badge { background: var(--tier-3); }
+  .t3 .title-label { color: #d99a5f; }
+
+  .t4 { width: 86%; --shadow-clr: rgba(74,82,107,0.3); }
+  .t4 .rank-badge { background: var(--tier-4); }
+  .t4 .title-label { color: #98a0bb; }
+
+  .t5 { width: 96%; --shadow-clr: rgba(58,63,82,0.3); }
+  .t5 .rank-badge { background: var(--tier-5); color: var(--ink); }
+  .t5 .title-label { color: #7a8095; }
+
+  /* crown on top tier */
+  .t1 .name::before {
+    content: "♔";
+    color: var(--gold);
+    margin-left: 10px;
+    font-size: 1.2em;
+    filter: drop-shadow(0 0 8px rgba(212,175,55,0.7));
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: rgba(236,232,223,0.3);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (max-width: 640px) {
+    .tier { width: 100% !important; }
+    .tier-inner { padding: 18px 18px; gap: 14px; }
+    .rank-badge { width: 50px; height: 50px; font-size: 1.3rem; }
+    .level-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <span class="crown">♛</span>
+    <h1>HIERARCHY</h1>
+    <p>هرم القيادة</p>
+    <div class="divider"></div>
+  </header>
+
+  <main class="pyramid" id="pyramid"></main>
+
+  <footer>— ترتيب احترافي ديناميكي —</footer>
+
+  <script>
+    const people = [
+      { rank: 1, name: "Ahmed Kamel",    label: "Supreme Leader", tier: "t1" },
+      { rank: 2, name: "Amr Kamel",      label: "Commander",      tier: "t2" },
+      { rank: 3, name: "Abdalla Nabil",  label: "Director",       tier: "t3" },
+      { rank: 4, name: "Hossam Halal",   label: "Officer",        tier: "t4" },
+      { rank: 5, name: "Other Personal", label: "Members",        tier: "t5" },
+    ];
+
+    const pyramid = document.getElementById("pyramid");
+
+    people.forEach((p, i) => {
+      const tier = document.createElement("div");
+      tier.className = `tier ${p.tier}`;
+      tier.style.animationDelay = `${0.25 + i * 0.18}s`;
+      tier.innerHTML = `
+        <div class="tier-inner">
+          <div class="rank-badge">${p.rank}</div>
+          <div class="info">
+            <div class="name">${p.name}</div>
+            <div class="title-label">${p.label}</div>
+          </div>
+          <div class="level-tag">LVL ${p.rank}</div>
+        </div>`;
+      pyramid.appendChild(tier);
+    });
+
+    // floating gold particles
+    const pc = document.getElementById("particles");
+    for (let i = 0; i < 30; i++) {
+      const dot = document.createElement("div");
+      dot.className = "particle";
+      dot.style.left = Math.random() * 100 + "vw";
+      dot.style.animationDuration = (8 + Math.random() * 10) + "s";
+      dot.style.animationDelay = (Math.random() * 10) + "s";
+      const s = 1 + Math.random() * 3;
+      dot.style.width = dot.style.height = s + "px";
+      pc.appendChild(dot);
+    }
+
+    // subtle 3D tilt on mouse move (desktop)
+    if (window.matchMedia("(hover: hover)").matches) {
+      document.querySelectorAll(".tier").forEach(t => {
+        t.addEventListener("mousemove", e => {
+          const r = t.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          t.querySelector(".tier-inner").style.transform =
+            `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+        });
+        t.addEventListener("mouseleave", () => {
+          t.querySelector(".tier-inner").style.transform = "";
+        });
+      });
+    }
+  </script>
+</body>
+</html>
