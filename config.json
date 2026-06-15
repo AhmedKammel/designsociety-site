@@ -1,23 +1,30 @@
 {
-  "_readme": "ملف التحكم أونلاين. غيّر القيم هنا وارفعه على GitHub، وسيتحدّث التطبيق تلقائيًا عند فتحه. ملاحظة: app_id (معرّف تطبيق AdMob) لا يتغيّر من هنا، بل من AndroidManifest.xml لأنه يُقرأ وقت الإقلاع.",
-  "app_name": "نظام نور",
-  "home_url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
+  "_readme": "ملف التحكم أونلاين. غيّر القيم هنا وارفعها على GitHub فيتحدّث التطبيق تلقائيًا. (1) لتشغيل الإعلان البيني مع كل نقرة اجعل interstitial_after_clicks = 1، ولتقليله اجعله 2 أو 3... (2) ضع معرّفات AdMob الحقيقية في قسم ads. (3) app_id لا يعمل من هنا، لازم يكون في AndroidManifest.xml لأنه يُقرأ وقت إقلاع التطبيق.",
+  "app_name": "نظام نور - دليل إرشادي",
+  "home_url": "https://designsociety.website/",
   "ads": {
     "enabled": true,
     "app_id": "ca-app-pub-3940256099942544~3347511713",
     "banner_id": "ca-app-pub-3940256099942544/6300978111",
     "interstitial_id": "ca-app-pub-3940256099942544/1033173712",
     "app_open_id": "ca-app-pub-3940256099942544/9257395921",
-    "interstitial_after_clicks": 3
+    "interstitial_after_clicks": 1
   },
   "pages": [
     {
       "title": "الرئيسية",
-      "url": "https://designsociety.website/",
+      "url": "https://designsociety.website/#top",
       "icon": "home"
+    },
+    {
+      "title": "عن نور",
+      "url": "https://designsociety.website/#about",
+      "icon": "info"
+    },
+    {
+      "title": "المستفيدون",
+      "url": "https://designsociety.website/#chooser",
+      "icon": "person"
     }
-
-
-    
   ]
 }
