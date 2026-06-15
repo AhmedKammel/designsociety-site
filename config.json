@@ -5,9 +5,9 @@
   "ads": {
     "enabled": true,
     "app_id": "ca-app-pub-3940256099942544~3347511713",
-    "banner_id": "ca-app-pub-6652531979838413/7651830701",
+    "banner_id": "",
     "interstitial_id": "",
-    "app_open_id": "ca-app-pub-6652531979838413/8997872821",
+    "app_open_id": "",
     "interstitial_after_clicks": 1
   },
   "pages": [
