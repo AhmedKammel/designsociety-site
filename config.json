@@ -13,23 +13,11 @@
   "pages": [
     {
       "title": "الرئيسية",
-      "url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
+      "url": "https://designsociety.website/",
       "icon": "home"
-    },
-    {
-      "title": "تسجيل الدخول",
-      "url": "https://noor.moe.gov.sa/Noor/Login.aspx",
-      "icon": "login"
-    },
-    {
-      "title": "النتائج",
-      "url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
-      "icon": "results"
-    },
-    {
-      "title": "عن المنصة",
-      "url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
-      "icon": "info"
     }
+
+
+    
   ]
 }
