@@ -1,0 +1,35 @@
+{
+  "_readme": "ملف التحكم أونلاين. غيّر القيم هنا وارفعه على GitHub، وسيتحدّث التطبيق تلقائيًا عند فتحه. ملاحظة: app_id (معرّف تطبيق AdMob) لا يتغيّر من هنا، بل من AndroidManifest.xml لأنه يُقرأ وقت الإقلاع.",
+  "app_name": "نظام نور",
+  "home_url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
+  "ads": {
+    "enabled": true,
+    "app_id": "ca-app-pub-3940256099942544~3347511713",
+    "banner_id": "ca-app-pub-3940256099942544/6300978111",
+    "interstitial_id": "ca-app-pub-3940256099942544/1033173712",
+    "app_open_id": "ca-app-pub-3940256099942544/9257395921",
+    "interstitial_after_clicks": 3
+  },
+  "pages": [
+    {
+      "title": "الرئيسية",
+      "url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
+      "icon": "home"
+    },
+    {
+      "title": "تسجيل الدخول",
+      "url": "https://noor.moe.gov.sa/Noor/Login.aspx",
+      "icon": "login"
+    },
+    {
+      "title": "النتائج",
+      "url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
+      "icon": "results"
+    },
+    {
+      "title": "عن المنصة",
+      "url": "https://noor.moe.gov.sa/Noor/EduWaveLanding/Home.aspx",
+      "icon": "info"
+    }
+  ]
+}
