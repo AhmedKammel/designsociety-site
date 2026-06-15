@@ -68,12 +68,6 @@
   .nav-links{display:flex;align-items:center;gap:28px;}
   .nav-links a{font-size:.95rem;color:var(--ink-soft);font-weight:500;position:relative;padding:6px 0;}
   .nav-links a:hover{color:var(--pine);}
-  .btn-login{
-    background:var(--pine);color:#fff;border:none;border-radius:11px;
-    padding:11px 22px;font-size:.95rem;font-weight:600;
-    transition:transform .15s ease, background .2s ease;
-  }
-  .btn-login:hover{background:var(--pine-deep);transform:translateY(-1px);}
   .menu-toggle{display:none;background:none;border:none;padding:8px;}
   .menu-toggle svg{width:26px;height:26px;color:var(--pine);}
 
@@ -245,7 +239,6 @@
   }
   @media (max-width:600px){
     .menu-toggle{display:block;}
-    .btn-login{display:none;}
     .nav-links{
       display:none;position:absolute;top:72px;right:0;left:0;
       flex-direction:column;align-items:stretch;gap:0;
@@ -282,9 +275,7 @@
       <a href="#top" onclick="goHome();return false;">الرئيسية</a>
       <a href="#about" onclick="navTo('about');return false;">عن نور</a>
       <a href="#chooser" onclick="showChooser();return false;">المستفيدون</a>
-      <a href="#footer" onclick="navTo('footer');return false;">تواصل معنا</a>
     </nav>
-    <button class="btn-login" type="button">تسجيل الدخول</button>
     <button class="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="navLinks" onclick="toggleMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
